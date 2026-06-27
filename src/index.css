@@ -1,0 +1,81 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --gold: #F5C518;
+  --gold-dim: #C9A014;
+  --gold-bg: #1A1200;
+  --gold-border: #3A2E00;
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --surface2: #1C1C1C;
+  --border: #2A2A2A;
+  --text: #E8E8E8;
+  --muted: #888888;
+  --green-bg: #0E110E;
+  --green-border: #1A2E1A;
+  --error-bg: #2A1212;
+  --error-border: #5A2020;
+  --error-text: #FF8080;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Dark mode is default — add light mode support if needed later */
+@media (prefers-color-scheme: light) {
+  /* Keep dark by default for now */
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 768px) {
+  .trip-planner-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-actions-desktop {
+    display: none !important;
+  }
+  .nav-hamburger {
+    display: block !important;
+  }
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
