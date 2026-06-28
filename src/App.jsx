@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   { id: 'planner', label: 'Trip Planner', icon: '🗺️' },
   { id: 'flights', label: 'Flight Finder', icon: '✈️' },
   { id: 'budget', label: 'Budget Tool', icon: '💰' },
-  { id: 'docs', label: 'Doc Generator' icon: '📋' },
+  { id: 'docs', label: 'Doc Generator', icon: '📋' },
 ]
 
 export default function App() {
