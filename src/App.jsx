@@ -157,6 +157,7 @@ export default function App() {
       {page === 'flights' && <FlightFinder {...sharedProps} />}
       {page === 'accommodation' && <AccommodationFinder {...sharedProps} />}
       {page === 'budget' && <BudgetCalculator {...sharedProps} />}
+      {page === 'docs' && <DocumentGenerator />}
       
 
 
