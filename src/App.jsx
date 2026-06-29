@@ -10,7 +10,7 @@ import TripPlanner from './pages/TripPlanner'
 import FlightFinder from './pages/FlightFinder'
 import AccommodationFinder from './pages/AccommodationFinder'
 import BudgetCalculator from './pages/BudgetCalculator'
-import DocumentGenerator from './components/DocumentGenerator'
+
 
 const DEFAULT_FILTERS = { sport: 'All Sports', country: 'All Countries', month: 'All Months', ageGroup: 'All Ages' }
 
@@ -156,7 +156,7 @@ export default function App() {
       {page === 'flights' && <FlightFinder {...sharedProps} />}
       {page === 'accommodation' && <AccommodationFinder {...sharedProps} />}
       {page === 'budget' && <BudgetCalculator {...sharedProps} />}
-      {page === 'docs' && <DocumentGenerator />}
+      
 
 
       {/* HOME PAGE */}
