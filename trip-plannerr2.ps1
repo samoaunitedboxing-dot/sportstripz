@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+$content = @'
+import { useState } from "react";
 
 const SPORTS = ["Boxing", "Wrestling", "Judo", "Swimming", "MMA", "Weightlifting", "Taekwondo", "Gymnastics", "Athletics", "Cycling", "Rowing", "Sailing"];
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -97,7 +98,7 @@ Be specific, practical, and globally accurate. Use your knowledge of passport vi
     <div style={styles.page}>
       <div style={styles.container}>
         <h1 style={styles.title}>AI TRIP PLANNER</h1>
-        <p style={styles.subtitle}>Enter your trip details and get a complete travel plan in seconds â€” routing, visas, costs, documents and funding points. Works for any country worldwide.</p>
+        <p style={styles.subtitle}>Enter your trip details and get a complete travel plan in seconds — routing, visas, costs, documents and funding points. Works for any country worldwide.</p>
 
         <div style={styles.card}>
           <div style={styles.grid}>
@@ -143,7 +144,7 @@ Be specific, practical, and globally accurate. Use your knowledge of passport vi
         {result && (
           <div style={styles.resultCard}>
             <div style={styles.badge}>AI GENERATED</div>
-            <h2 style={styles.resultTitle}>{form.athletes} {form.sport} Athletes â€” {form.destination} â€” {form.month}</h2>
+            <h2 style={styles.resultTitle}>{form.athletes} {form.sport} Athletes — {form.destination} — {form.month}</h2>
             <div style={styles.resultText}>{result}</div>
           </div>
         )}
@@ -151,3 +152,7 @@ Be specific, practical, and globally accurate. Use your knowledge of passport vi
     </div>
   );
 }
+'@
+
+[System.IO.File]::WriteAllText("C:\sportstripz\src\pages\TripPlanner.jsx", $content, [System.Text.Encoding]::UTF8)
+Write-Host "Done - TripPlanner updated global"
