@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { supabase } from './supabaseClient'
 import { MOCK_TOURNAMENTS, SPORTS, AGE_GROUPS, MONTHS } from './mockData'
 import FilterBar from './components/FilterBar'
@@ -16,12 +16,12 @@ import DocumentGenerator from './components/DocumentGenerator'
 const DEFAULT_FILTERS = { sport: 'All Sports', country: 'All Countries', month: 'All Months', ageGroup: 'All Ages' }
 
 const NAV_ITEMS = [
-  { id: 'home', label: 'Tournaments', icon: '🏆' },
-  { id: 'accommodation', label: 'Accommodation', icon: '🏨' },
-  { id: 'planner', label: 'Trip Planner', icon: '🗺️' },
-  { id: 'flights', label: 'Flight Finder', icon: '✈️' },
-  { id: 'budget', label: 'Budget Tool', icon: '💰' },
-  { id: 'docs', label: 'Doc Generator', icon:  '📋' },
+  { id: 'home', label: 'Tournaments', icon: 'ðŸ†' },
+  { id: 'accommodation', label: 'Accommodation', icon: 'ðŸ¨' },
+  { id: 'planner', label: 'Trip Planner', icon: 'ðŸ—ºï¸' },
+  { id: 'flights', label: 'Flight Finder', icon: 'âœˆï¸' },
+  { id: 'budget', label: 'Budget Tool', icon: 'ðŸ’°' },
+  { id: 'docs', label: 'Doc Generator', icon:  'ðŸ“‹' },
 ]
 
 export default function App() {
@@ -96,7 +96,7 @@ export default function App() {
       <nav style={nav}>
         <div style={navInner}>
           <button style={logoBtn} onClick={() => setPage('home')}>
-            <span style={{ fontSize: 22 }}>🥊</span>
+            <span style={{ fontSize: 22 }}>ðŸ¥Š</span>
             <span style={logoText}>Sports<span style={{ color: '#F5C518' }}>Tripz</span></span>
           </button>
 
@@ -114,7 +114,7 @@ export default function App() {
           <div style={navActions}>
             {user ? (
               <>
-                <span style={userPill}><span style={{ color: '#F5C518' }}>●</span> {user.name}</span>
+                <span style={userPill}><span style={{ color: '#F5C518' }}>â—</span> {user.name}</span>
                 <button style={btnOutline} onClick={() => setShowAddForm(true)}>+ Add</button>
                 <button style={btnGhost} onClick={signOut}>Out</button>
               </>
@@ -127,7 +127,7 @@ export default function App() {
           </div>
 
           <button style={hamburger} onClick={() => setMenuOpen(m => !m)}>
-            {menuOpen ? '✕' : '☰'}
+            {menuOpen ? 'âœ•' : 'â˜°'}
           </button>
         </div>
 
@@ -169,7 +169,7 @@ export default function App() {
               <h1 style={heroTitle}>
                 Find your next<br /><span style={{ color: '#F5C518' }}>international bout.</span>
               </h1>
-              <p style={heroSub}>Tournaments, accommodation, flights, visas, and budgets — all in one place. Built for coaches.</p>
+              <p style={heroSub}>Tournaments, accommodation, flights, visas, and budgets â€” all in one place. Built for coaches.</p>
               <div style={heroStats}>
                 <Stat num={tournaments.length} label="tournaments" />
                 <div style={statDiv} />
@@ -181,10 +181,10 @@ export default function App() {
               {/* Feature grid */}
               <div style={featureGrid}>
                 {[
-                  { id: 'accommodation', icon: '🏨', title: 'Accommodation Finder', sub: 'Coach-verified stays near venues' },
-                  { id: 'budget', icon: '💰', title: 'Budget Calculator', sub: 'PDF reports for funding applications' },
-                  { id: 'planner', icon: '🗺️', title: 'AI Trip Planner', sub: 'Full itinerary in seconds' },
-                  { id: 'flights', icon: '✈️', title: 'Flight Finder', sub: 'Routes with passport warnings' },
+                  { id: 'accommodation', icon: 'ðŸ¨', title: 'Accommodation Finder', sub: 'Coach-verified stays near venues' },
+                  { id: 'budget', icon: 'ðŸ’°', title: 'Budget Calculator', sub: 'PDF reports for funding applications' },
+                  { id: 'planner', icon: 'ðŸ—ºï¸', title: 'AI Trip Planner', sub: 'Full itinerary in seconds' },
+                  { id: 'flights', icon: 'âœˆï¸', title: 'Flight Finder', sub: 'Routes with passport warnings' },
                 ].map(f => (
                   <button key={f.id} style={featureBtn} onClick={() => setPage(f.id)}
                     onMouseEnter={e => e.currentTarget.style.borderColor = '#F5C518'}
@@ -200,7 +200,7 @@ export default function App() {
 
               {!user && (
                 <button style={{ ...btnGold, marginTop: 20, fontSize: 14, padding: '11px 28px' }} onClick={() => setShowAuth(true)}>
-                  Join as a coach — it's free
+                  Join as a coach â€” it's free
                 </button>
               )}
             </div>
@@ -210,19 +210,19 @@ export default function App() {
             <FilterBar filters={filters} setFilters={setFilters} countries={countries} />
             <div style={resultsBar}>
               <span style={{ color: '#888', fontSize: 14 }}>
-                {loading ? 'Loading…' : `${filtered.length} tournament${filtered.length !== 1 ? 's' : ''}`}
+                {loading ? 'Loadingâ€¦' : `${filtered.length} tournament${filtered.length !== 1 ? 's' : ''}`}
               </span>
               {user
                 ? <button style={btnGoldSm} onClick={() => setShowAddForm(true)}>+ Add Tournament</button>
-                : <button style={linkBtn} onClick={() => setShowAuth(true)}>Sign up to add a tournament →</button>
+                : <button style={linkBtn} onClick={() => setShowAuth(true)}>Sign up to add a tournament â†’</button>
               }
             </div>
 
             {loading ? (
-              <div style={loadingState}><div style={spinner} /><p style={{ color: '#888', marginTop: 16 }}>Loading tournaments…</p></div>
+              <div style={loadingState}><div style={spinner} /><p style={{ color: '#888', marginTop: 16 }}>Loading tournamentsâ€¦</p></div>
             ) : filtered.length === 0 ? (
               <div style={emptyState}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>ðŸ”</div>
                 <h3 style={{ color: '#eee', marginBottom: 8 }}>No tournaments match your filters</h3>
                 <button style={linkBtn} onClick={() => setFilters(DEFAULT_FILTERS)}>Clear all filters</button>
               </div>
@@ -302,5 +302,3 @@ const btnGoldSm = { background: '#F5C518', color: '#000', border: 'none', border
 const btnOutline = { background: 'none', border: '1px solid #F5C518', borderRadius: 8, color: '#F5C518', padding: '7px 14px', fontWeight: 600, fontSize: 13, cursor: 'pointer' }
 const btnGhost = { background: 'none', border: '1px solid #2A2A2A', borderRadius: 8, color: '#888', padding: '7px 12px', fontSize: 13, cursor: 'pointer' }
 const linkBtn = { background: 'none', border: 'none', color: '#F5C518', cursor: 'pointer', fontSize: 13, fontFamily: 'inherit', padding: 0 }
-
-{page === 'docs' && <DocumentGenerator />}
