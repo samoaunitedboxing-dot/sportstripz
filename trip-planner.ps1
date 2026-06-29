@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+$content = @'
+import { useState } from "react";
 
 const SPORTS = ["Boxing", "Wrestling", "Judo", "Swimming", "MMA", "Weightlifting"];
 const PASSPORTS = ["Samoa", "Tonga", "Fiji", "Cook Islands", "Vanuatu", "Solomon Islands", "Kiribati", "Tuvalu"];
@@ -98,7 +99,7 @@ Be specific, practical, and Pacific-focused. Use your knowledge of Samoan, Tonga
     <div style={styles.page}>
       <div style={styles.container}>
         <h1 style={styles.title}>AI TRIP PLANNER</h1>
-        <p style={styles.subtitle}>Tell us your trip details and get a complete travel plan in seconds â€” routing, visas, costs, documents and funding points.</p>
+        <p style={styles.subtitle}>Tell us your trip details and get a complete travel plan in seconds — routing, visas, costs, documents and funding points.</p>
 
         <div style={styles.card}>
           <div style={styles.grid}>
@@ -147,7 +148,7 @@ Be specific, practical, and Pacific-focused. Use your knowledge of Samoan, Tonga
         {result && (
           <div style={styles.resultCard}>
             <div style={styles.badge}>AI GENERATED</div>
-            <h2 style={styles.resultTitle}>{form.athletes} {form.sport} Athletes â€” {form.destination} â€” {form.month}</h2>
+            <h2 style={styles.resultTitle}>{form.athletes} {form.sport} Athletes — {form.destination} — {form.month}</h2>
             <div style={styles.resultText}>{result}</div>
           </div>
         )}
@@ -155,3 +156,7 @@ Be specific, practical, and Pacific-focused. Use your knowledge of Samoan, Tonga
     </div>
   );
 }
+'@
+
+[System.IO.File]::WriteAllText("C:\sportstripz\src\pages\TripPlanner.jsx", $content, [System.Text.Encoding]::UTF8)
+Write-Host "Done - TripPlanner.jsx created"
