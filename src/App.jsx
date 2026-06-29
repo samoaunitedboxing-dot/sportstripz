@@ -10,6 +10,7 @@ import TripPlanner from './pages/TripPlanner'
 import FlightFinder from './pages/FlightFinder'
 import AccommodationFinder from './pages/AccommodationFinder'
 import BudgetCalculator from './pages/BudgetCalculator'
+import DocumentGenerator from './components/DocumentGenerator'
 
 
 const DEFAULT_FILTERS = { sport: 'All Sports', country: 'All Countries', month: 'All Months', ageGroup: 'All Ages' }
