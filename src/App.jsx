@@ -16,12 +16,12 @@ import DocumentGenerator from './components/DocumentGenerator'
 const DEFAULT_FILTERS = { sport: 'All Sports', country: 'All Countries', month: 'All Months', ageGroup: 'All Ages' }
 
 const NAV_ITEMS = [
-  { id: 'home', label: 'Tournaments', icon: 'ðŸ†' },
-  { id: 'accommodation', label: 'Accommodation', icon: 'ðŸ¨' },
-  { id: 'planner', label: 'Trip Planner', icon: 'ðŸ—ºï¸' },
-  { id: 'flights', label: 'Flight Finder', icon: 'âœˆï¸' },
-  { id: 'budget', label: 'Budget Tool', icon: 'ðŸ’°' },
-  { id: 'docs', label: 'Doc Generator', icon:  'ðŸ“‹' },
+  { id: "home", label: "Tournaments", icon: "ðŸ¥Š" },
+  { id: "accommodation", label: "Accommodation", icon: "ðŸ¨" },
+  { id: "planner", label: "Trip Planner", icon: "ðŸ—ºï¸" },
+  { id: "flights", label: "Flight Finder", icon: "âœˆï¸" },
+  { id: "budget", label: "Budget Tool", icon: "ðŸ’°" },
+  { id: "docs", label: "Doc Generator", icon: "ðŸ“„" },
 ]
 
 export default function App() {
@@ -182,10 +182,10 @@ export default function App() {
               {/* Feature grid */}
               <div style={featureGrid}>
                 {[
-                  { id: 'accommodation', icon: 'ðŸ¨', title: 'Accommodation Finder', sub: 'Coach-verified stays near venues' },
-                  { id: 'budget', icon: 'ðŸ’°', title: 'Budget Calculator', sub: 'PDF reports for funding applications' },
-                  { id: 'planner', icon: 'ðŸ—ºï¸', title: 'AI Trip Planner', sub: 'Full itinerary in seconds' },
-                  { id: 'flights', icon: 'âœˆï¸', title: 'Flight Finder', sub: 'Routes with passport warnings' },
+                  { id: 'accommodation', icon: '', title: 'Accommodation Finder', sub: 'Coach-verified stays near venues' },
+                  { id: 'budget', icon: '', title: 'Budget Calculator', sub: 'PDF reports for funding applications' },
+                  { id: 'planner', icon: '', title: 'AI Trip Planner', sub: 'Full itinerary in seconds' },
+                  { id: 'flights', icon: '', title: 'Flight Finder', sub: 'Routes with passport warnings' },
                 ].map(f => (
                   <button key={f.id} style={featureBtn} onClick={() => setPage(f.id)}
                     onMouseEnter={e => e.currentTarget.style.borderColor = '#F5C518'}
@@ -303,3 +303,4 @@ const btnGoldSm = { background: '#F5C518', color: '#000', border: 'none', border
 const btnOutline = { background: 'none', border: '1px solid #F5C518', borderRadius: 8, color: '#F5C518', padding: '7px 14px', fontWeight: 600, fontSize: 13, cursor: 'pointer' }
 const btnGhost = { background: 'none', border: '1px solid #2A2A2A', borderRadius: 8, color: '#888', padding: '7px 12px', fontSize: 13, cursor: 'pointer' }
 const linkBtn = { background: 'none', border: 'none', color: '#F5C518', cursor: 'pointer', fontSize: 13, fontFamily: 'inherit', padding: 0 }
+
