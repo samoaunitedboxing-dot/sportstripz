@@ -144,7 +144,7 @@ FUNDING APPLICATION POINTS
 TIMELINE
 Working backwards from ${form.month}, when should the coach start each preparation step.
 
-Be specific, practical, and globally accurate. Use your knowledge of passport visa restrictions worldwide. Use markdown formatting with ## for section headers and **bold** for key terms.`;
+IMPORTANT: Before answering the VISA REQUIREMENTS section, use the web_search tool to find current, official visa requirements for a ${form.passport} passport holder travelling to ${form.destination}. Search official government or embassy sources. Do not rely on memory alone for visa rules - they change frequently and being wrong could strand a sports team at the border. Cite what you found from your search. Be specific, practical, and globally accurate. Use markdown formatting with ## for section headers and **bold** for key terms.`;
 
     try {
       const response = await fetch("/api/claude", {
@@ -152,13 +152,19 @@ Be specific, practical, and globally accurate. Use your knowledge of passport vi
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-6",
-          max_tokens: 1500,
+          max_tokens: 2500,
           messages: [{ role: "user", content: prompt }]
         })
       });
       const data = await response.json();
-      if (data.content && data.content[0] && data.content[0].text) {
-        setResult(data.content[0].text);
+      if (data.content) {
+        const textBlocks = data.content.filter(b => b.type === "text").map(b => b.text);
+        const combined = textBlocks.join("\n\n");
+        if (combined) {
+          setResult(combined);
+        } else {
+          setError("No text content in response. Please try again.");
+        }
       } else if (data.error) {
         setError(data.error.message || "API error. Please try again.");
       } else {

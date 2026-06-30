@@ -1,4 +1,5 @@
-﻿export default async function handler(req, res) {
+$api = @'
+export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -26,3 +27,7 @@
     res.status(500).json({ error: err.message });
   }
 }
+'@
+
+[System.IO.File]::WriteAllText("C:\sportstripz\api\claude.js", $api, [System.Text.Encoding]::UTF8)
+Write-Host "Done - web search enabled"
