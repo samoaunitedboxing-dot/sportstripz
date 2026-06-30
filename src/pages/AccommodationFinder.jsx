@@ -80,8 +80,9 @@ Return ONLY the JSON array. No other text. No markdown.`;
         })
       });
       const data = await response.json();
-      if (data.content && data.content[0] && data.content[0].text) {
-        const text = data.content[0].text.trim();
+      const textBlock = (data.content || []).find(b => b.type === "text");
+  if (textBlock && textBlock.text) {
+        const text = textBlock.text.trim();
         const clean = text.replace(/```json|```/g, "").trim();
         const parsed = JSON.parse(clean);
         setResults(parsed);
