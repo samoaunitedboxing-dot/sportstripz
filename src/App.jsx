@@ -16,12 +16,12 @@ import DocumentGenerator from './components/DocumentGenerator'
 const DEFAULT_FILTERS = { sport: 'All Sports', country: 'All Countries', month: 'All Months', ageGroup: 'All Ages' }
 
 const NAV_ITEMS = [
-  { id: "home", label: "Tournaments", icon: "ðŸ¥Š" },
-  { id: "accommodation", label: "Accommodation", icon: "ðŸ¨" },
-  { id: "planner", label: "Trip Planner", icon: "ðŸ—ºï¸" },
-  { id: "flights", label: "Flight Finder", icon: "âœˆï¸" },
-  { id: "budget", label: "Budget Tool", icon: "ðŸ’°" },
-  { id: "docs", label: "Doc Generator", icon: "ðŸ“„" },
+  { id: "home", label: "Tournaments", icon: "" },
+  { id: "accommodation", label: "Accommodation", icon: "" },
+  { id: "planner", label: "Trip Planner", icon: "" },
+  { id: "flights", label: "Flight Finder", icon: "" },
+  { id: "budget", label: "Budget Tool", icon: "" },
+  { id: "docs", label: "Doc Generator", icon: "" },
 ]
 
 export default function App() {
@@ -170,7 +170,7 @@ export default function App() {
               <h1 style={heroTitle}>
                 Find your next<br /><span style={{ color: '#F5C518' }}>international bout.</span>
               </h1>
-              <p style={heroSub}>Tournaments, accommodation, flights, visas, and budgets â€” all in one place. Built for coaches.</p>
+              <p style={heroSub}>Tournaments, accommodation, flights, visas, and budgets - all in one place. Built for coaches.</p>
               <div style={heroStats}>
                 <Stat num={tournaments.length} label="tournaments" />
                 <div style={statDiv} />
@@ -201,7 +201,7 @@ export default function App() {
 
               {!user && (
                 <button style={{ ...btnGold, marginTop: 20, fontSize: 14, padding: '11px 28px' }} onClick={() => setShowAuth(true)}>
-                  Join as a coach â€” it's free
+                  Join as a coach - it's free
                 </button>
               )}
             </div>
