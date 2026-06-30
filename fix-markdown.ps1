@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+$content = @'
+import { useState } from "react";
 
 const SPORTS = ["Boxing", "Wrestling", "Judo", "Swimming", "MMA", "Weightlifting", "Taekwondo", "Gymnastics", "Athletics", "Cycling", "Rowing", "Sailing"];
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -64,7 +65,7 @@ function renderMarkdown(text) {
     } else if (trimmed.startsWith("# ")) {
       elements.push(<h1 key={idx} style={{ color: "#F5C518", fontSize: 28, fontFamily: "Bebas Neue, sans-serif", letterSpacing: 1, margin: "0 0 16px 0" }}>{renderInline(trimmed.slice(2).replace(/[#*]/g, ""))}</h1>);
     } else if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-      elements.push(<div key={idx} style={{ display: "flex", gap: 8, margin: "4px 0", color: "#ddd", fontSize: 15, lineHeight: 1.6 }}><span style={{ color: "#F5C518" }}>â€¢</span><span>{renderInline(trimmed.slice(2))}</span></div>);
+      elements.push(<div key={idx} style={{ display: "flex", gap: 8, margin: "4px 0", color: "#ddd", fontSize: 15, lineHeight: 1.6 }}><span style={{ color: "#F5C518" }}>•</span><span>{renderInline(trimmed.slice(2))}</span></div>);
     } else if (trimmed === "---") {
       elements.push(<hr key={idx} style={{ border: "none", borderTop: "1px solid #2A2A2A", margin: "20px 0" }} />);
     } else if (trimmed.length === 0) {
@@ -228,3 +229,7 @@ Be specific, practical, and globally accurate. Use your knowledge of passport vi
     </div>
   );
 }
+'@
+
+[System.IO.File]::WriteAllText("C:\sportstripz\src\pages\TripPlanner.jsx", $content, [System.Text.Encoding]::UTF8)
+Write-Host "Done - markdown rendering added"
