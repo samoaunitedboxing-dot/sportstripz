@@ -75,7 +75,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-6",
-          max_tokens: 1500,
+          max_tokens: 3000,
           messages: [{ role: "user", content: prompt }]
         })
       });
