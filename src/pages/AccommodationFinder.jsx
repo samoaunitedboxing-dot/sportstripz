@@ -49,7 +49,7 @@ SEARCH REQUEST:
 - Accommodation type preference: ${search.type || "Any"}
 - Max budget per person per night USD: ${search.maxBudget || "No limit"}
 
-Return ONLY a JSON array with 8 to 10 accommodation options suitable for sports teams in ${search.city}. Include a genuine mix across types - at least 2 hotels, 2 hostels, 2 apartments, and 1-2 guesthouses if available in that city. Cover a range of price points from budget to mid-range to higher-end, not all similar prices. Each object must have these exact fields:
+Return ONLY a JSON array with 6 accommodation options suitable for sports teams in ${search.city}. Include a genuine mix across types - a mix of hotels, hostels, and apartments in that city. Cover a range of price points from budget to mid-range to higher-end, not all similar prices. Each object must have these exact fields:
 {
   "name": "Hotel name",
   "type": "hotel OR hostel OR apartment OR guesthouse",
