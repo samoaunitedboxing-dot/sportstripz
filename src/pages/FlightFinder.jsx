@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { MOCK_ROUTES } from '../mockRoutes'
 
@@ -88,7 +88,43 @@ export default function FlightFinder({ onNavigate }) {
           (r.destination_city.toLowerCase().includes(form.destination.toLowerCase()) ||
            r.destination_country.toLowerCase().includes(form.destination.toLowerCase()))
         )
-        if (!data.length) data = MOCK_ROUTES.slice(0, 3)
+        if (!data.length) {
+        const prompt = `You are SportsTripz flight routing expert. Generate realistic flight route options for a travelling sports team.
+
+SEARCH REQUEST:
+- Departure: ${form.departure}
+- Destination: ${form.destination}
+- Passport: ${form.passportCountry}
+- Group size: ${form.groupSize}
+- Travel month: ${form.month}
+- Budget per person USD: ${form.budget}
+
+Return ONLY a JSON array with 3 realistic route options. Each object must have these exact fields:
+{"departure_region":"${form.departure}","departure_country":"${form.departure}","destination_city":"City name","destination_country":"${form.destination}","route_summary":"Airline(s) and routing e.g. via Istanbul (IST)","airlines":["Airline 1","Airline 2"],"transit_hubs":["City (CODE)"],"avg_cost_usd":1400,"cost_range":"e.g. $950-$1900","duration":"e.g. 26-34 hours total","notes":"Best value / visa tips / booking advice","coach_tip":"Practical tip for booking as a team"}
+Return ONLY the JSON array. No other text. No markdown.`;
+
+        try {
+          const res = await fetch("/api/claude", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "claude-sonnet-4-6",
+              max_tokens: 2000,
+              messages: [{ role: "user", content: prompt }]
+            })
+          });
+          const aiData = await res.json();
+          const textBlock = (aiData.content || []).find(b => b.type === "text");
+          if (textBlock && textBlock.text) {
+            const clean = textBlock.text.trim().replace(/```json|```/g, "").trim();
+            data = JSON.parse(clean);
+          } else {
+            data = MOCK_ROUTES.slice(0, 3);
+          }
+        } catch (e) {
+          data = MOCK_ROUTES.slice(0, 3);
+        }
+      }
       }
       const sorted = data.sort((a, b) => (a.avg_cost_usd || 0) - (b.avg_cost_usd || 0)).slice(0, 3)
       setRoutes(sorted)
