@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+$content = @'
+import { useState } from "react";
 
 export default function AccommodationFinder() {
   const [search, setSearch] = useState({ city: "", type: "", maxBudget: "" });
@@ -96,7 +97,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
     setLoading(false);
   };
 
-  const stars = (n) => "â˜…".repeat(Math.floor(n)) + "â˜†".repeat(5 - Math.floor(n));
+  const stars = (n) => "★".repeat(Math.floor(n)) + "☆".repeat(5 - Math.floor(n));
 
   return (
     <div style={styles.page}>
@@ -141,7 +142,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
 
         {results && results.length > 0 && (
           <div>
-            <div style={styles.badge}>AI POWERED â€” {results.length} OPTIONS FOUND IN {search.city.toUpperCase()}</div>
+            <div style={styles.badge}>AI POWERED — {results.length} OPTIONS FOUND IN {search.city.toUpperCase()}</div>
             {results.map((r, i) => (
               <div key={i} style={styles.resultCard}>
                 <div style={styles.resultTitle}>{r.name}</div>
@@ -173,3 +174,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
     </div>
   );
 }
+'@
+
+[System.IO.File]::WriteAllText("C:\sportstripz\src\pages\AccommodationFinder.jsx", $content, [System.Text.Encoding]::UTF8)
+Write-Host "Done - AccommodationFinder updated global"
