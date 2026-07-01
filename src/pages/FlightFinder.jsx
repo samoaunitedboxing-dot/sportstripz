@@ -393,8 +393,8 @@ Return ONLY the JSON array. No other text. No markdown.`;
                   <button style={addTipBtn} onClick={() => setTipRoute(route.id)}>
                       + Add a routing tip
                     </button>
-                  )}
-                </>
+                  </>
+                )}
                 </div>
               ))}
             </div>
