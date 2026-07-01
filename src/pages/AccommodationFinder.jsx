@@ -161,7 +161,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
                 <div style={styles.detail}>Booking tip: {r.booking_tip}</div>
                 <div style={styles.notes}>{r.coach_note}</div>
               <img
-                src={`https://source.unsplash.com/400x200/?hotel,${encodeURIComponent(r.area)}`}
+                src={`https://picsum.photos/seed/${encodeURIComponent(r.name)}/400/200`}
                 alt={r.name}
                 style={{ width: "100%", borderRadius: 8, marginTop: 12, objectFit: "cover", height: 180 }}
                 onError={(e) => { e.target.style.display = "none" }}
