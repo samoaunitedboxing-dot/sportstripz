@@ -62,6 +62,8 @@ export default function FlightFinder({ onNavigate }) {
   const [tip, setTip] = useState('')
   const [tipRoute, setTipRoute] = useState(null)
   const [tipSaved, setTipSaved] = useState(false)
+  const [expandedRoute, setExpandedRoute] = useState(null)
+  const [expandedHub, setExpandedHub] = useState(null)
 
   function set(key, val) { setForm(f => ({ ...f, [key]: val })) }
 
@@ -301,7 +303,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {routes.map((route, i) => (
-                <div key={route.id || i} style={{ ...routeCard, ...(i === 0 ? routeCardBest : {}) }}>
+                <div key={route.id || i} style={{ ...routeCard, ...(i === 0 ? routeCardBest : {}), cursor: "pointer" }} onClick={() => setExpandedRoute(expandedRoute === (route.id || i) ? null : (route.id || i))}>
                   {i === 0 && <div style={bestBadge}>⭐ Best Value</div>}
                   <div style={routeTop}>
                     <div style={{ flex: 1 }}>
@@ -358,7 +360,36 @@ Return ONLY the JSON array. No other text. No markdown.`;
                       </div>
                     </div>
                   ) : (
-                    <button style={addTipBtn} onClick={() => setTipRoute(route.id)}>
+                    {expandedRoute === (route.id || i) && (
+                    <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #333" }}>
+                      <div style={{ color: "#F5C518", fontWeight: 700, marginBottom: 8 }}>Route Details</div>
+                      <div style={{ color: "#ccc", fontSize: 13, marginBottom: 10 }}>
+                        Tap a layover below for more info. Confirm exact connection times when booking.
+                      </div>
+                      {(route.transit_hubs || []).map((hub, hi) => {
+                        const hubKey = `${route.id || i}-${hi}`;
+                        return (
+                          <div key={hi}>
+                            <div
+                              onClick={(e) => { e.stopPropagation(); setExpandedHub(expandedHub === hubKey ? null : hubKey); }}
+                              style={{ background: "#242830", padding: "8px 12px", borderRadius: 6, marginBottom: 6, fontSize: 13, cursor: "pointer" }}
+                            >
+                              <strong style={{ color: "#F5C518" }}>{hub}</strong> layover
+                            </div>
+                            {expandedHub === hubKey && (
+                              <div style={{ background: "#1a1d24", padding: "8px 12px", borderRadius: 6, marginBottom: 6, fontSize: 12, color: "#aaa" }}>
+                                Typical layover: 2-4 hours. Allow buffer time for transit visa checks and terminal transfers at {hub}.
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      <div style={{ color: "#888", fontSize: 12, marginTop: 8 }}>
+                        Boxing gear / sports equipment may incur excess baggage fees — confirm directly with the airline for team bookings.
+                      </div>
+                    </div>
+                  )}
+                  <button style={addTipBtn} onClick={() => setTipRoute(route.id)}>
                       + Add a routing tip
                     </button>
                   )}
