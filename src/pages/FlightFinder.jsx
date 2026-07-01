@@ -360,6 +360,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
                       </div>
                     </div>
                   ) : (
+                    <>
                     {expandedRoute === (route.id || i) && (
                     <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #333" }}>
                       <div style={{ color: "#F5C518", fontWeight: 700, marginBottom: 8 }}>Route Details</div>
@@ -393,6 +394,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
                       + Add a routing tip
                     </button>
                   )}
+                </>
                 </div>
               ))}
             </div>
