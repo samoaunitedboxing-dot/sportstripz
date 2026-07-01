@@ -160,12 +160,17 @@ Return ONLY the JSON array. No other text. No markdown.`;
                 <div style={styles.detail}>Group discount: {r.group_discount}</div>
                 <div style={styles.detail}>Booking tip: {r.booking_tip}</div>
                 <div style={styles.notes}>{r.coach_note}</div>
-              <img
-                src={`https://picsum.photos/seed/${encodeURIComponent(r.name)}/400/200`}
-                alt={r.name}
-                style={{ width: "100%", borderRadius: 8, marginTop: 12, objectFit: "cover", height: 180 }}
-                onError={(e) => { e.target.style.display = "none" }}
-              />
+              <div style={{ display: "flex", gap: 6, marginTop: 12 }}>
+                  {[1,2,3].map((n) => (
+                    <img
+                      key={n}
+                      src={`https://picsum.photos/seed/${encodeURIComponent(r.name)}-${n}/400/200`}
+                      alt={r.name}
+                      style={{ width: "33.33%", borderRadius: 8, objectFit: "cover", height: 120 }}
+                      onError={(e) => { e.target.style.display = "none" }}
+                    />
+                  ))}
+                </div>
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                 <a href={`https://www.google.com/maps/search/${encodeURIComponent(r.name + " " + r.area)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#F5C518", color: "#000", padding: "8px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>📍 View on Map</a>
                 <a href={`https://www.booking.com/search.html?ss=${encodeURIComponent(r.name + " " + search.city)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#003580", color: "#fff", padding: "8px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>🏨 Book Now</a>
