@@ -79,6 +79,47 @@ function renderMarkdown(text) {
   return elements;
 }
 
+function CollapsibleMarkdown({ text }) {
+  const [collapsed, setCollapsed] = useState({});
+  const elements = renderMarkdown(text);
+  if (!elements) return null;
+
+  const sections = [];
+  let current = { title: null, key: "intro", items: [] };
+  elements.forEach((el) => {
+    if (el.type === "h2") {
+      sections.push(current);
+      current = { title: el, key: el.key, items: [] };
+    } else {
+      current.items.push(el);
+    }
+  });
+  sections.push(current);
+
+  const toggle = (key) => setCollapsed((c) => ({ ...c, [key]: !c[key] }));
+
+  return (
+    <div>
+      {sections.map((s) => (
+        <div key={s.key} style={{ marginBottom: 8 }}>
+          {s.title ? (
+            <div
+              onClick={() => toggle(s.key)}
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}
+            >
+              {s.title}
+              <span style={{ color: "#F5C518", fontSize: 20, marginLeft: 12 }}>
+                {collapsed[s.key] ? "+" : "\u2212"}
+              </span>
+            </div>
+          ) : null}
+          {(!s.title || !collapsed[s.key]) && <div>{s.items}</div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function TripPlanner() {
   const [form, setForm] = useState({ sport: "", passport: "", destination: "", athletes: "", month: "" });
   const [result, setResult] = useState(null);
@@ -227,7 +268,7 @@ IMPORTANT: Before answering the VISA REQUIREMENTS section, use the web_search to
           <div style={styles.resultCard}>
             <div style={styles.badge}>AI GENERATED</div>
             <h2 style={styles.resultTitle}>{form.athletes} {form.sport} Athletes - {form.destination} - {form.month}</h2>
-            <div>{renderMarkdown(result)}</div>
+            <div><CollapsibleMarkdown text={result} /></div>
             <div style={{ marginTop: 24, padding: 16, background: "#1a1500", border: "1px solid #F5C518", borderRadius: 8, color: "#F5C518", fontSize: 13, lineHeight: 1.6 }}>
               <strong>Important:</strong> Visa rules and entry requirements change frequently and can vary by passport, length of stay, and purpose of travel. This AI-generated information may contain errors. Always confirm directly with the destination country's embassy, consulate, or official government website before booking flights or making travel arrangements.
             </div>
