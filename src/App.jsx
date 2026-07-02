@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from './supabaseClient'
 import { MOCK_TOURNAMENTS, SPORTS, AGE_GROUPS, MONTHS } from './mockData'
 import FilterBar from './components/FilterBar'
@@ -15,6 +15,22 @@ import DrawTool from './pages/DrawTool'
 
 
 const DEFAULT_FILTERS = { sport: 'All Sports', country: 'All Countries', month: 'All Months', ageGroup: 'All Ages' }
+const LOCAL_TOURNAMENTS_KEY = 'sportstripz_user_tournaments'
+
+function loadLocalTournaments() {
+  try {
+    const raw = localStorage.getItem(LOCAL_TOURNAMENTS_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+function saveLocalTournaments(list) {
+  try {
+    localStorage.setItem(LOCAL_TOURNAMENTS_KEY, JSON.stringify(list))
+  } catch {}
+}
 
 const NAV_ITEMS = [
   { id: "home", label: "Tournaments", icon: "" },
@@ -36,6 +52,7 @@ export default function App() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [user, setUser] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [savedToast, setSavedToast] = useState(false)
 
   useEffect(() => {
     try {
@@ -47,6 +64,7 @@ export default function App() {
   useEffect(() => {
     async function load() {
       setLoading(true)
+      const local = loadLocalTournaments()
       try {
         if (supabase) {
           const { data, error } = await supabase
@@ -54,14 +72,15 @@ export default function App() {
             .select('*, reviews:team_reviews(*)')
             .order('start_date', { ascending: true })
           if (error) throw error
-          setTournaments(data?.length ? data : MOCK_TOURNAMENTS)
+          const base = data?.length ? data : MOCK_TOURNAMENTS
+          setTournaments([...local, ...base])
         } else {
           await new Promise(r => setTimeout(r, 400))
-          setTournaments(MOCK_TOURNAMENTS)
+          setTournaments([...local, ...MOCK_TOURNAMENTS])
         }
       } catch (err) {
         console.error('Failed to load tournaments:', err)
-        setTournaments(MOCK_TOURNAMENTS)
+        setTournaments([...local, ...MOCK_TOURNAMENTS])
       } finally {
         setLoading(false)
       }
@@ -71,7 +90,16 @@ export default function App() {
 
   function signOut() { localStorage.removeItem('sportstripz_user'); setUser(null); setMenuOpen(false) }
   function handleAuth(u) { setUser(u); setShowAuth(false) }
-  function addTournament(t) { setTournaments(ts => [t, ...ts]) }
+
+  function addTournament(t) {
+    const withId = { ...t, id: t.id || 'local-' + Date.now() }
+    setTournaments(ts => [withId, ...ts])
+    const local = loadLocalTournaments()
+    saveLocalTournaments([withId, ...local])
+    setSavedToast(true)
+    setTimeout(() => setSavedToast(false), 3000)
+  }
+
   function addReview(tournamentId, review) {
     setTournaments(ts => ts.map(t => t.id === tournamentId ? { ...t, reviews: [...(t.reviews || []), review] } : t))
     setSelected(prev => prev?.id === tournamentId ? { ...prev, reviews: [...(prev.reviews || []), review] } : prev)
@@ -94,11 +122,14 @@ export default function App() {
 
   return (
     <div style={app}>
+      {savedToast && (
+        <div style={toast}>Tournament added and saved</div>
+      )}
       {/* NAV */}
       <nav style={nav}>
         <div style={navInner}>
           <button style={logoBtn} onClick={() => setPage('home')}>
-            <span style={{ fontSize: 22 }}>🥊</span>
+            <span style={{ fontSize: 22 }}>ðŸ¥Š</span>
             <span style={logoText}>Sports<span style={{ color: '#F5C518' }}>Tripz</span></span>
           </button>
 
@@ -116,7 +147,7 @@ export default function App() {
           <div style={navActions}>
             {user ? (
               <>
-                <span style={userPill}><span style={{ color: '#F5C518' }}>●</span> {user.name}</span>
+                <span style={userPill}><span style={{ color: '#F5C518' }}>â—</span> {user.name}</span>
                 <button style={btnOutline} onClick={() => setShowAddForm(true)}>+ Add</button>
                 <button style={btnGhost} onClick={signOut}>Out</button>
               </>
@@ -129,7 +160,7 @@ export default function App() {
           </div>
 
           <button style={hamburger} onClick={() => setMenuOpen(m => !m)}>
-            {menuOpen ? '✕' : '☰'}
+            {menuOpen ? 'âœ•' : 'â˜°'}
           </button>
         </div>
 
@@ -215,19 +246,19 @@ export default function App() {
             <FilterBar filters={filters} setFilters={setFilters} countries={countries} />
             <div style={resultsBar}>
               <span style={{ color: '#888', fontSize: 14 }}>
-                {loading ? 'Loading…' : `${filtered.length} tournament${filtered.length !== 1 ? 's' : ''}`}
+                {loading ? 'Loadingâ€¦' : `${filtered.length} tournament${filtered.length !== 1 ? 's' : ''}`}
               </span>
               {user
                 ? <button style={btnGoldSm} onClick={() => setShowAddForm(true)}>+ Add Tournament</button>
-                : <button style={linkBtn} onClick={() => setShowAuth(true)}>Sign up to add a tournament →</button>
+                : <button style={linkBtn} onClick={() => setShowAuth(true)}>Sign up to add a tournament â†’</button>
               }
             </div>
 
             {loading ? (
-              <div style={loadingState}><div style={spinner} /><p style={{ color: '#888', marginTop: 16 }}>Loading tournaments…</p></div>
+              <div style={loadingState}><div style={spinner} /><p style={{ color: '#888', marginTop: 16 }}>Loading tournamentsâ€¦</p></div>
             ) : filtered.length === 0 ? (
               <div style={emptyState}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>ðŸ”</div>
                 <h3 style={{ color: '#eee', marginBottom: 8 }}>No tournaments match your filters</h3>
                 <button style={linkBtn} onClick={() => setFilters(DEFAULT_FILTERS)}>Clear all filters</button>
               </div>
@@ -272,6 +303,7 @@ function Stat({ num, label }) {
 }
 
 const app = { background: '#0A0A0A', minHeight: '100vh', color: '#E8E8E8', fontFamily: "'Inter', system-ui, sans-serif" }
+const toast = { position: 'fixed', top: 70, left: '50%', transform: 'translateX(-50%)', zIndex: 200, background: '#1a1500', border: '1px solid #F5C518', color: '#F5C518', padding: '10px 20px', borderRadius: 8, fontSize: 13, fontWeight: 700 }
 const nav = { position: 'sticky', top: 0, zIndex: 100, background: 'rgba(10,10,10,0.96)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #2A2A2A' }
 const navInner = { maxWidth: 1300, margin: '0 auto', padding: '0 20px', height: 58, display: 'flex', alignItems: 'center', gap: 12 }
 const logoBtn = { background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }
