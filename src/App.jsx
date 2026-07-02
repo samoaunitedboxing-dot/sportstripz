@@ -11,6 +11,7 @@ import FlightFinder from './pages/FlightFinder'
 import AccommodationFinder from './pages/AccommodationFinder'
 import BudgetCalculator from './pages/BudgetCalculator'
 import DocumentGenerator from './components/DocumentGenerator'
+import DrawTool from './pages/DrawTool'
 
 
 const DEFAULT_FILTERS = { sport: 'All Sports', country: 'All Countries', month: 'All Months', ageGroup: 'All Ages' }
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { id: "flights", label: "Flight Finder", icon: "" },
   { id: "budget", label: "Budget Tool", icon: "" },
   { id: "docs", label: "Doc Generator", icon: "" },
+  { id: "draw", label: "Draw Tool", icon: "" },
 ]
 
 export default function App() {
@@ -96,7 +98,7 @@ export default function App() {
       <nav style={nav}>
         <div style={navInner}>
           <button style={logoBtn} onClick={() => setPage('home')}>
-            <span style={{ fontSize: 22 }}>ðŸ¥Š</span>
+            <span style={{ fontSize: 22 }}>🥊</span>
             <span style={logoText}>Sports<span style={{ color: '#F5C518' }}>Tripz</span></span>
           </button>
 
@@ -114,7 +116,7 @@ export default function App() {
           <div style={navActions}>
             {user ? (
               <>
-                <span style={userPill}><span style={{ color: '#F5C518' }}>â—</span> {user.name}</span>
+                <span style={userPill}><span style={{ color: '#F5C518' }}>●</span> {user.name}</span>
                 <button style={btnOutline} onClick={() => setShowAddForm(true)}>+ Add</button>
                 <button style={btnGhost} onClick={signOut}>Out</button>
               </>
@@ -127,7 +129,7 @@ export default function App() {
           </div>
 
           <button style={hamburger} onClick={() => setMenuOpen(m => !m)}>
-            {menuOpen ? 'âœ•' : 'â˜°'}
+            {menuOpen ? '✕' : '☰'}
           </button>
         </div>
 
@@ -158,6 +160,7 @@ export default function App() {
       {page === 'accommodation' && <AccommodationFinder {...sharedProps} />}
       {page === 'budget' && <BudgetCalculator {...sharedProps} />}
       {page === 'docs' && <DocumentGenerator />}
+      {page === 'draw' && <DrawTool {...sharedProps} />}
       
 
 
@@ -186,6 +189,7 @@ export default function App() {
                   { id: 'budget', icon: '', title: 'Budget Calculator', sub: 'PDF reports for funding applications' },
                   { id: 'planner', icon: '', title: 'AI Trip Planner', sub: 'Full itinerary in seconds' },
                   { id: 'flights', icon: '', title: 'Flight Finder', sub: 'Routes with passport warnings' },
+                  { id: 'draw', icon: '', title: 'Draw Tool', sub: 'Auto-generate brackets by weight class' },
                 ].map(f => (
                   <button key={f.id} style={featureBtn} onClick={() => setPage(f.id)}
                     onMouseEnter={e => e.currentTarget.style.borderColor = '#F5C518'}
@@ -211,19 +215,19 @@ export default function App() {
             <FilterBar filters={filters} setFilters={setFilters} countries={countries} />
             <div style={resultsBar}>
               <span style={{ color: '#888', fontSize: 14 }}>
-                {loading ? 'Loadingâ€¦' : `${filtered.length} tournament${filtered.length !== 1 ? 's' : ''}`}
+                {loading ? 'Loading…' : `${filtered.length} tournament${filtered.length !== 1 ? 's' : ''}`}
               </span>
               {user
                 ? <button style={btnGoldSm} onClick={() => setShowAddForm(true)}>+ Add Tournament</button>
-                : <button style={linkBtn} onClick={() => setShowAuth(true)}>Sign up to add a tournament â†’</button>
+                : <button style={linkBtn} onClick={() => setShowAuth(true)}>Sign up to add a tournament →</button>
               }
             </div>
 
             {loading ? (
-              <div style={loadingState}><div style={spinner} /><p style={{ color: '#888', marginTop: 16 }}>Loading tournamentsâ€¦</p></div>
+              <div style={loadingState}><div style={spinner} /><p style={{ color: '#888', marginTop: 16 }}>Loading tournaments…</p></div>
             ) : filtered.length === 0 ? (
               <div style={emptyState}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>ðŸ”</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
                 <h3 style={{ color: '#eee', marginBottom: 8 }}>No tournaments match your filters</h3>
                 <button style={linkBtn} onClick={() => setFilters(DEFAULT_FILTERS)}>Clear all filters</button>
               </div>
@@ -303,4 +307,3 @@ const btnGoldSm = { background: '#F5C518', color: '#000', border: 'none', border
 const btnOutline = { background: 'none', border: '1px solid #F5C518', borderRadius: 8, color: '#F5C518', padding: '7px 14px', fontWeight: 600, fontSize: 13, cursor: 'pointer' }
 const btnGhost = { background: 'none', border: '1px solid #2A2A2A', borderRadius: 8, color: '#888', padding: '7px 12px', fontSize: 13, cursor: 'pointer' }
 const linkBtn = { background: 'none', border: 'none', color: '#F5C518', cursor: 'pointer', fontSize: 13, fontFamily: 'inherit', padding: 0 }
-
