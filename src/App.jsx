@@ -32,6 +32,11 @@ function saveLocalTournaments(list) {
   } catch {}
 }
 
+function pageFromHash() {
+  const h = (window.location.hash || '').replace('#', '')
+  return h || 'home'
+}
+
 const NAV_ITEMS = [
   { id: "home", label: "Tournaments", icon: "" },
   { id: "accommodation", label: "Accommodation", icon: "" },
@@ -43,7 +48,7 @@ const NAV_ITEMS = [
 ]
 
 export default function App() {
-  const [page, setPage] = useState('home')
+  const [page, setPage] = useState(pageFromHash())
   const [tournaments, setTournaments] = useState([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
@@ -53,6 +58,23 @@ export default function App() {
   const [user, setUser] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [savedToast, setSavedToast] = useState(false)
+
+  function navigate(p) {
+    window.history.pushState({ page: p }, '', '#' + p)
+    setPage(p)
+    window.scrollTo(0, 0)
+  }
+
+  useEffect(() => {
+    function onPop() {
+      setPage(pageFromHash())
+    }
+    window.addEventListener('popstate', onPop)
+    if (!window.location.hash) {
+      window.history.replaceState({ page: 'home' }, '', '#home')
+    }
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
 
   useEffect(() => {
     try {
@@ -118,7 +140,7 @@ export default function App() {
   })
   const totalReviews = tournaments.reduce((a, t) => a + (t.reviews?.length || 0), 0)
 
-  const sharedProps = { user, onAuthRequired: () => setShowAuth(true), onNavigate: setPage }
+  const sharedProps = { user, onAuthRequired: () => setShowAuth(true), onNavigate: navigate }
 
   return (
     <div style={app}>
@@ -128,8 +150,13 @@ export default function App() {
       {/* NAV */}
       <nav style={nav}>
         <div style={navInner}>
-          <button style={logoBtn} onClick={() => setPage('home')}>
-            <span style={{ fontSize: 22 }}>ðŸ¥Š</span>
+          {page !== 'home' && (
+            <button style={backNavBtn} onClick={() => window.history.back()} title="Go back">
+              ←
+            </button>
+          )}
+          <button style={logoBtn} onClick={() => navigate('home')}>
+            <span style={{ fontSize: 22 }}>🥊</span>
             <span style={logoText}>Sports<span style={{ color: '#F5C518' }}>Tripz</span></span>
           </button>
 
@@ -138,7 +165,7 @@ export default function App() {
             {NAV_ITEMS.map(item => (
               <button key={item.id}
                 style={{ ...navLink, ...(page === item.id ? navLinkActive : {}) }}
-                onClick={() => setPage(item.id)}>
+                onClick={() => navigate(item.id)}>
                 {item.icon} {item.label}
               </button>
             ))}
@@ -147,7 +174,7 @@ export default function App() {
           <div style={navActions}>
             {user ? (
               <>
-                <span style={userPill}><span style={{ color: '#F5C518' }}>â—</span> {user.name}</span>
+                <span style={userPill}><span style={{ color: '#F5C518' }}>●</span> {user.name}</span>
                 <button style={btnOutline} onClick={() => setShowAddForm(true)}>+ Add</button>
                 <button style={btnGhost} onClick={signOut}>Out</button>
               </>
@@ -160,14 +187,14 @@ export default function App() {
           </div>
 
           <button style={hamburger} onClick={() => setMenuOpen(m => !m)}>
-            {menuOpen ? 'âœ•' : 'â˜°'}
+            {menuOpen ? '✕' : '☰'}
           </button>
         </div>
 
         {menuOpen && (
           <div style={mobileMenu}>
             {NAV_ITEMS.map(item => (
-              <button key={item.id} style={mobileLinkBtn} onClick={() => { setPage(item.id); setMenuOpen(false) }}>
+              <button key={item.id} style={mobileLinkBtn} onClick={() => { navigate(item.id); setMenuOpen(false) }}>
                 {item.icon} {item.label}
               </button>
             ))}
@@ -222,7 +249,7 @@ export default function App() {
                   { id: 'flights', icon: '', title: 'Flight Finder', sub: 'Routes with passport warnings' },
                   { id: 'draw', icon: '', title: 'Draw Tool', sub: 'Auto-generate brackets by weight class' },
                 ].map(f => (
-                  <button key={f.id} style={featureBtn} onClick={() => setPage(f.id)}
+                  <button key={f.id} style={featureBtn} onClick={() => navigate(f.id)}
                     onMouseEnter={e => e.currentTarget.style.borderColor = '#F5C518'}
                     onMouseLeave={e => e.currentTarget.style.borderColor = '#2A2A2A'}>
                     <span style={{ fontSize: 28 }}>{f.icon}</span>
@@ -246,19 +273,19 @@ export default function App() {
             <FilterBar filters={filters} setFilters={setFilters} countries={countries} />
             <div style={resultsBar}>
               <span style={{ color: '#888', fontSize: 14 }}>
-                {loading ? 'Loadingâ€¦' : `${filtered.length} tournament${filtered.length !== 1 ? 's' : ''}`}
+                {loading ? 'Loading…' : `${filtered.length} tournament${filtered.length !== 1 ? 's' : ''}`}
               </span>
               {user
                 ? <button style={btnGoldSm} onClick={() => setShowAddForm(true)}>+ Add Tournament</button>
-                : <button style={linkBtn} onClick={() => setShowAuth(true)}>Sign up to add a tournament â†’</button>
+                : <button style={linkBtn} onClick={() => setShowAuth(true)}>Sign up to add a tournament →</button>
               }
             </div>
 
             {loading ? (
-              <div style={loadingState}><div style={spinner} /><p style={{ color: '#888', marginTop: 16 }}>Loading tournamentsâ€¦</p></div>
+              <div style={loadingState}><div style={spinner} /><p style={{ color: '#888', marginTop: 16 }}>Loading tournaments…</p></div>
             ) : filtered.length === 0 ? (
               <div style={emptyState}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>ðŸ”</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
                 <h3 style={{ color: '#eee', marginBottom: 8 }}>No tournaments match your filters</h3>
                 <button style={linkBtn} onClick={() => setFilters(DEFAULT_FILTERS)}>Clear all filters</button>
               </div>
@@ -274,7 +301,7 @@ export default function App() {
               <span style={logoText}>Sports<span style={{ color: '#F5C518' }}>Tripz</span></span>
               <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 {NAV_ITEMS.filter(n => n.id !== 'home').map(n => (
-                  <button key={n.id} style={footerLink} onClick={() => setPage(n.id)}>{n.icon} {n.label}</button>
+                  <button key={n.id} style={footerLink} onClick={() => navigate(n.id)}>{n.icon} {n.label}</button>
                 ))}
               </div>
             </div>
@@ -306,6 +333,7 @@ const app = { background: '#0A0A0A', minHeight: '100vh', color: '#E8E8E8', fontF
 const toast = { position: 'fixed', top: 70, left: '50%', transform: 'translateX(-50%)', zIndex: 200, background: '#1a1500', border: '1px solid #F5C518', color: '#F5C518', padding: '10px 20px', borderRadius: 8, fontSize: 13, fontWeight: 700 }
 const nav = { position: 'sticky', top: 0, zIndex: 100, background: 'rgba(10,10,10,0.96)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #2A2A2A' }
 const navInner = { maxWidth: 1300, margin: '0 auto', padding: '0 20px', height: 58, display: 'flex', alignItems: 'center', gap: 12 }
+const backNavBtn = { background: 'none', border: '1px solid #2A2A2A', borderRadius: 8, color: '#F5C518', width: 32, height: 32, fontSize: 16, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }
 const logoBtn = { background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }
 const logoText = { fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 22, letterSpacing: 2, color: '#E8E8E8' }
 const navLinks = { display: 'flex', gap: 2, flex: 1, overflowX: 'auto' }
