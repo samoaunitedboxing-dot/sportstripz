@@ -148,6 +148,7 @@ export default function TripPlanner() {
     grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 },
     resultCard: { background: "#111", border: "1px solid #F5C518", borderRadius: 12, padding: 32 },
     resultTitle: { fontFamily: "Bebas Neue, sans-serif", fontSize: 28, color: "#F5C518", marginBottom: 20 },
+    bookBtn: { display: "inline-block", background: "#F5C518", color: "#000", textDecoration: "none", borderRadius: 8, padding: "12px 24px", fontSize: 14, fontWeight: 700, fontFamily: "Bebas Neue, sans-serif", letterSpacing: 1, marginBottom: 24 },
     error: { background: "#1a0a0a", border: "1px solid #c0392b", borderRadius: 8, padding: 16, color: "#e74c3c", marginBottom: 20 },
     loading: { textAlign: "center", color: "#F5C518", padding: 40, fontSize: 18 },
     badge: { display: "inline-block", background: "#1a1500", border: "1px solid #F5C518", color: "#F5C518", borderRadius: 6, padding: "4px 12px", fontSize: 12, fontWeight: 700, letterSpacing: 1, marginBottom: 16 },
@@ -276,6 +277,14 @@ IMPORTANT: Before answering the VISA REQUIREMENTS section, use the web_search to
           <div style={styles.resultCard}>
             <div style={styles.badge}>AI GENERATED</div>
             <h2 style={styles.resultTitle}>{form.athletes} {form.sport} Athletes - {form.destination} - {form.month}</h2>
+            
+              href={`https://www.google.com/travel/flights?q=${encodeURIComponent(`Flights from ${form.passport} to ${form.destination} in ${form.month}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={styles.bookBtn}
+            >
+              ✈️ SEARCH & BOOK FLIGHTS
+            </a>
             <div><TabbedMarkdown text={result} /></div>
             <div style={{ marginTop: 24, padding: 16, background: "#1a1500", border: "1px solid #F5C518", borderRadius: 8, color: "#F5C518", fontSize: 13, lineHeight: 1.6 }}>
               <strong>Important:</strong> Visa rules and entry requirements change frequently and can vary by passport, length of stay, and purpose of travel. This AI-generated information may contain errors. Always confirm directly with the destination country's embassy, consulate, or official government website before booking flights or making travel arrangements.
