@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { MOCK_ROUTES } from '../mockRoutes'
 
@@ -53,6 +53,11 @@ function getWarnings(passportCountry, routes) {
   return [...new Map(triggered.map(w => [w.hub, w])).values()]
 }
 
+function bookingUrlFor(route, month) {
+  var q = "Flights from " + (route.departure_region || "") + " to " + (route.destination_city || "") + " in " + (month || "")
+  return "https://www.google.com/travel/flights?q=" + encodeURIComponent(q)
+}
+
 export default function FlightFinder({ onNavigate }) {
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ departure: '', destination: '', passportCountry: '', groupSize: 5, month: 'March', budget: 1500 })
@@ -80,7 +85,7 @@ export default function FlightFinder({ onNavigate }) {
           .or(`departure_region.ilike.%${dep}%,departure_country.ilike.%${dep}%`)
           .or(`destination_city.ilike.%${dest}%,destination_country.ilike.%${dest}%`)
           .order('avg_cost_usd', { ascending: true })
-          .limit(5)
+          .limit(6)
         data = rows || []
       }
       if (!data.length) {
@@ -101,7 +106,7 @@ SEARCH REQUEST:
 - Travel month: ${form.month}
 - Budget per person USD: ${form.budget}
 
-Return ONLY a JSON array with 3 realistic route options. Each object must have these exact fields:
+Return ONLY a JSON array with 6 realistic route options, covering a genuine range of airlines, transit hubs, and price points (budget through premium) - not 6 near-identical routes. Each object must have these exact fields:
 {"departure_region":"${form.departure}","departure_country":"${form.departure}","destination_city":"City name","destination_country":"${form.destination}","route_summary":"Airline(s) and routing e.g. via Istanbul (IST)","airlines":["Airline 1","Airline 2"],"transit_hubs":["City (CODE)"],"avg_cost_usd":1400,"cost_range":"e.g. $950-$1900","duration":"e.g. 26-34 hours total","notes":"Best value / visa tips / booking advice","coach_tip":"Practical tip for booking as a team"}
 Return ONLY the JSON array. No other text. No markdown.`;
 
@@ -111,7 +116,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               model: "claude-sonnet-4-6",
-              max_tokens: 2000,
+              max_tokens: 3000,
               messages: [{ role: "user", content: prompt }]
             })
           });
@@ -121,14 +126,14 @@ Return ONLY the JSON array. No other text. No markdown.`;
             const clean = textBlock.text.trim().replace(/```json|```/g, "").trim();
             data = JSON.parse(clean);
           } else {
-            data = MOCK_ROUTES.slice(0, 3);
+            data = MOCK_ROUTES.slice(0, 6);
           }
         } catch (e) {
-          data = MOCK_ROUTES.slice(0, 3);
+          data = MOCK_ROUTES.slice(0, 6);
         }
       }
       }
-      const sorted = data.sort((a, b) => (a.avg_cost_usd || 0) - (b.avg_cost_usd || 0)).slice(0, 3)
+      const sorted = data.sort((a, b) => (a.avg_cost_usd || 0) - (b.avg_cost_usd || 0)).slice(0, 6)
       setRoutes(sorted)
       setWarnings(getWarnings(form.passportCountry, sorted))
     } finally {
@@ -328,6 +333,16 @@ Return ONLY the JSON array. No other text. No markdown.`;
                     {route.flight_hours && <span style={{ color: '#666', fontSize: 12, marginLeft: 'auto' }}>⏱ {route.flight_hours}</span>}
                   </div>
 
+                  <a
+                    href={bookingUrlFor(route, form.month)}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    style={bookNowBtn}
+                  >
+                    Search &amp; Book Flights
+                  </a>
+
                   {route.tips && <p style={routeTips}>{route.tips}</p>}
 
                   {route.visa_notes && (
@@ -461,6 +476,7 @@ const routeViaLine = { color: '#888', fontSize: 13 }
 const routeCost = { fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 28, color: '#F5C518', letterSpacing: 1 }
 const airlineRow = { display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12, alignItems: 'center' }
 const airlineChip = { background: '#1C1C1C', border: '1px solid #333', borderRadius: 4, padding: '3px 10px', fontSize: 12, color: '#bbb' }
+const bookNowBtn = { display: 'inline-block', background: '#F5C518', color: '#000', border: 'none', borderRadius: 6, padding: '9px 18px', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'none', marginBottom: 12 }
 const routeTips = { color: '#ccc', fontSize: 13, lineHeight: 1.6, margin: '0 0 12px' }
 const routeVisaBox = { background: '#0E110E', border: '1px solid #1A2E1A', borderRadius: 8, padding: '12px 14px', marginBottom: 12 }
 const communitySection = { background: '#0D0D10', border: '1px solid #252530', borderRadius: 8, padding: '12px 14px', marginBottom: 12 }
