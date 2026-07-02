@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 
 const SPORTS = ["Boxing", "Wrestling", "Judo", "Swimming", "MMA", "Weightlifting", "Taekwondo", "Gymnastics", "Athletics", "Cycling", "Rowing", "Sailing"];
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -280,7 +280,7 @@ IMPORTANT: Before answering the VISA REQUIREMENTS section, use the web_search to
           <div style={styles.resultCard}>
             <div style={styles.badge}>AI GENERATED</div>
             <h2 style={styles.resultTitle}>{form.athletes} {form.sport} Athletes - {form.destination} - {form.month}</h2>
-            
+            <a
               href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
