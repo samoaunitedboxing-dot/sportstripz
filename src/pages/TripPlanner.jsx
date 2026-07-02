@@ -286,7 +286,7 @@ IMPORTANT: Before answering the VISA REQUIREMENTS section, use the web_search to
               rel="noopener noreferrer"
               style={styles.bookBtn}
             >
-              ✈️ SEARCH & BOOK FLIGHTS
+              SEARCH AND BOOK FLIGHTS
             </a>
             <div><TabbedMarkdown text={result} /></div>
             <div style={{ marginTop: 24, padding: 16, background: "#1a1500", border: "1px solid #F5C518", borderRadius: 8, color: "#F5C518", fontSize: 13, lineHeight: 1.6 }}>
