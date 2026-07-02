@@ -2,6 +2,19 @@ import { useState } from "react";
 
 const CACHE_KEY_PREFIX = "sportstripz_accom_cache_";
 
+// AFFILIATE CONFIG - once CJ approves your Booking.com application, paste your
+// real affiliate ID here (found under Booking.com > Get Links in your CJ account).
+// Example real ID looks like: 956509
+const BOOKING_AFFILIATE_ID = "REPLACE_WITH_CJ_AFFILIATE_ID";
+
+function bookingAffiliateUrl(baseUrl) {
+  if (BOOKING_AFFILIATE_ID === "REPLACE_WITH_CJ_AFFILIATE_ID") {
+    return baseUrl; // no tracking yet - update BOOKING_AFFILIATE_ID above once approved
+  }
+  const sep = baseUrl.includes("?") ? "&" : "?";
+  return baseUrl + sep + "aid=" + BOOKING_AFFILIATE_ID;
+}
+
 function safeStars(n) {
   const num = typeof n === "number" && !isNaN(n) ? Math.max(0, Math.min(5, n)) : 0;
   const filled = Math.max(0, Math.min(5, Math.floor(num)));
@@ -211,7 +224,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
                 {r.coach_note && <div style={styles.notes}>{r.coach_note}</div>}
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                 <a href={`https://www.google.com/maps/search/${encodeURIComponent(r.name + " " + r.area + " " + search.city)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#F5C518", color: "#000", padding: "10px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>View Real Photos &amp; Reviews on Maps</a>
-                <a href={`https://www.booking.com/search.html?ss=${encodeURIComponent(r.name + " " + search.city)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#003580", color: "#fff", padding: "10px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>Book Now</a>
+                <a href={bookingAffiliateUrl(`https://www.booking.com/search.html?ss=${encodeURIComponent(r.name + " " + search.city)}`)} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#003580", color: "#fff", padding: "10px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>Book Now</a>
               </div>
               <div style={styles.photoNotice}>Photos and reviews load from the property's real Maps listing - not shown inline to avoid mismatched images.</div>
               </div>

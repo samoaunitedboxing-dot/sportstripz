@@ -53,6 +53,9 @@ function getWarnings(passportCountry, routes) {
   return [...new Map(triggered.map(w => [w.hub, w])).values()]
 }
 
+// AFFILIATE CONFIG - Google Flights has no commission program, so this is kept
+// as a working fallback for now. Once your Booking.com/CJ flights affiliate link
+// is confirmed working, replace the return value below with that real URL format.
 function bookingUrlFor(route, month) {
   var q = "Flights from " + (route.departure_region || "") + " to " + (route.destination_city || "") + " in " + (month || "")
   return "https://www.google.com/travel/flights?q=" + encodeURIComponent(q)
