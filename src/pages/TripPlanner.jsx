@@ -156,6 +156,9 @@ export default function TripPlanner() {
 
   const isReady = form.sport && form.passport && form.destination && form.athletes && form.month;
 
+  const flightQuery = "Flights from " + form.passport + " to " + form.destination + " in " + form.month;
+  const bookingUrl = "https://www.google.com/travel/flights?q=" + encodeURIComponent(flightQuery);
+
   const generate = async () => {
     if (!isReady) return;
     setLoading(true);
@@ -278,7 +281,7 @@ IMPORTANT: Before answering the VISA REQUIREMENTS section, use the web_search to
             <div style={styles.badge}>AI GENERATED</div>
             <h2 style={styles.resultTitle}>{form.athletes} {form.sport} Athletes - {form.destination} - {form.month}</h2>
             
-              href={`https://www.google.com/travel/flights?q=${encodeURIComponent(`Flights from ${form.passport} to ${form.destination} in ${form.month}`)}`}
+              href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
               style={styles.bookBtn}
