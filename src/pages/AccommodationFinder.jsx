@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 
 export default function AccommodationFinder() {
   const [search, setSearch] = useState({ city: "", type: "", maxBudget: "" });
@@ -31,6 +31,7 @@ export default function AccommodationFinder() {
     noResults: { textAlign: "center", color: "#888", padding: 40 },
     badge: { display: "inline-block", background: "#1a1500", border: "1px solid #F5C518", color: "#F5C518", borderRadius: 6, padding: "4px 12px", fontSize: 12, fontWeight: 700, letterSpacing: 1, marginBottom: 16 },
     stars: { color: "#F5C518", marginBottom: 8 },
+    photoNotice: { color: "#666", fontSize: 12, marginTop: 12, fontStyle: "italic" },
   };
 
   const isReady = search.city.trim().length > 1;
@@ -49,9 +50,11 @@ SEARCH REQUEST:
 - Accommodation type preference: ${search.type || "Any"}
 - Max budget per person per night USD: ${search.maxBudget || "No limit"}
 
-Return ONLY a JSON array with 6 accommodation options suitable for sports teams in ${search.city}. Include a genuine mix across types - a mix of hotels, hostels, and apartments in that city. Cover a range of price points from budget to mid-range to higher-end, not all similar prices. Each object must have these exact fields:
+IMPORTANT: Use the web_search tool to find REAL, currently operating hotels, hostels, apartments, or guesthouses in ${search.city}. Do not invent fictional properties - every name returned must be a genuine, real, bookable accommodation that actually exists right now. Search for terms like "best hotels near [venue/city centre] ${search.city}" and "budget accommodation ${search.city}" to find real options.
+
+After researching, return ONLY a JSON array with 6 real accommodation options suitable for sports teams in ${search.city}. Include a genuine mix across types - a mix of hotels, hostels, and apartments in that city. Cover a range of price points from budget to mid-range to higher-end, not all similar prices. Each object must have these exact fields:
 {
-  "name": "Hotel name",
+  "name": "Real hotel name as found via search",
   "type": "hotel OR hostel OR apartment OR guesthouse",
   "area": "Neighborhood or area name",
   "distance_to_centre": "X km from city centre",
@@ -136,13 +139,13 @@ Return ONLY the JSON array. No other text. No markdown.`;
 
         {loading && (
           <div style={styles.card}>
-            <div style={styles.loading}>Finding best options for sports teams in {search.city}...</div>
+            <div style={styles.loading}>Finding real, bookable options for sports teams in {search.city}...</div>
           </div>
         )}
 
         {results && results.length > 0 && (
           <div>
-            <div style={styles.badge}>AI POWERED - {results.length} OPTIONS FOUND IN {search.city.toUpperCase()}</div>
+            <div style={styles.badge}>AI POWERED - {results.length} REAL OPTIONS FOUND IN {search.city.toUpperCase()}</div>
             {results.map((r, i) => (
               <div key={i} style={styles.resultCard}>
                 <div style={styles.resultTitle}>{r.name}</div>
@@ -160,21 +163,11 @@ Return ONLY the JSON array. No other text. No markdown.`;
                 <div style={styles.detail}>Group discount: {r.group_discount}</div>
                 <div style={styles.detail}>Booking tip: {r.booking_tip}</div>
                 <div style={styles.notes}>{r.coach_note}</div>
-              <div style={{ display: "flex", gap: 6, marginTop: 12 }}>
-                  {[1,2,3].map((n) => (
-                    <img
-                      key={n}
-                      src={`https://picsum.photos/seed/${encodeURIComponent(r.name)}-${n}/400/200`}
-                      alt={r.name}
-                      style={{ width: "33.33%", borderRadius: 8, objectFit: "cover", height: 120 }}
-                      onError={(e) => { e.target.style.display = "none" }}
-                    />
-                  ))}
-                </div>
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                <a href={`https://www.google.com/maps/search/${encodeURIComponent(r.name + " " + r.area)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#F5C518", color: "#000", padding: "8px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>📍 View on Map</a>
-                <a href={`https://www.booking.com/search.html?ss=${encodeURIComponent(r.name + " " + search.city)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#003580", color: "#fff", padding: "8px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>🏨 Book Now</a>
+                <a href={`https://www.google.com/maps/search/${encodeURIComponent(r.name + " " + r.area + " " + search.city)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#F5C518", color: "#000", padding: "10px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>View Real Photos &amp; Reviews on Maps</a>
+                <a href={`https://www.booking.com/search.html?ss=${encodeURIComponent(r.name + " " + search.city)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#003580", color: "#fff", padding: "10px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>Book Now</a>
               </div>
+              <div style={styles.photoNotice}>Photos and reviews load from the property's real Maps listing - not shown inline to avoid mismatched images.</div>
               </div>
             ))}
           </div>
