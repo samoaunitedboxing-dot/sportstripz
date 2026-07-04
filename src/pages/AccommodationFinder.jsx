@@ -2,6 +2,30 @@ import { useState } from "react";
 
 const CACHE_KEY_PREFIX = "sportstripz_accom_cache_";
 
+// GOOGLE PLACES API - used to fetch 3-4 real photos per property
+const GOOGLE_PLACES_API_KEY = "AIzaSyCz91taNX_Q7q99xuIcuX3sAVALWmN_T_U";
+
+async function fetchPropertyPhotos(name, city) {
+  try {
+    const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_PLACES_API_KEY,
+        "X-Goog-FieldMask": "places.photos",
+      },
+      body: JSON.stringify({ textQuery: `${name} ${city}` }),
+    });
+    const data = await res.json();
+    const photos = data.places?.[0]?.photos || [];
+    return photos.slice(0, 4).map(
+      (p) => `https://places.googleapis.com/v1/${p.name}/media?maxHeightPx=300&key=${GOOGLE_PLACES_API_KEY}`
+    );
+  } catch {
+    return [];
+  }
+}
+
 // AFFILIATE CONFIG - once CJ approves your Booking.com application, paste your
 // real affiliate ID here (found under Booking.com > Get Links in your CJ account).
 // Example real ID looks like: 956509
@@ -48,6 +72,7 @@ export default function AccommodationFinder() {
   const [error, setError] = useState(null);
   const [searched, setSearched] = useState(false);
   const [fromCache, setFromCache] = useState(false);
+  const [photoMap, setPhotoMap] = useState({});
 
   const styles = {
     page: { minHeight: "100vh", background: "#0a0a0a", padding: "40px 20px", fontFamily: "Inter, sans-serif" },
@@ -87,6 +112,7 @@ export default function AccommodationFinder() {
     setResults(null);
     setSearched(true);
     setFromCache(false);
+    setPhotoMap({});
 
     try {
       const cached = sessionStorage.getItem(cacheKey());
@@ -95,6 +121,11 @@ export default function AccommodationFinder() {
         setResults(parsedCache);
         setFromCache(true);
         setLoading(false);
+        parsedCache.forEach((r, i) => {
+          fetchPropertyPhotos(r.name, search.city).then((urls) => {
+            setPhotoMap((prev) => ({ ...prev, [i]: urls }));
+          });
+        });
         return;
       }
     } catch {}
@@ -147,6 +178,11 @@ Return ONLY the JSON array. No other text. No markdown.`;
         const safeResults = (Array.isArray(parsed) ? parsed : []).map(sanitizeResult).filter(Boolean);
         setResults(safeResults);
         try { sessionStorage.setItem(cacheKey(), JSON.stringify(safeResults)); } catch {}
+        safeResults.forEach((r, i) => {
+          fetchPropertyPhotos(r.name, search.city).then((urls) => {
+            setPhotoMap((prev) => ({ ...prev, [i]: urls }));
+          });
+        });
       } else if (data.error) {
         setError(data.error.message || "API error. Please try again.");
       } else {
@@ -208,6 +244,13 @@ Return ONLY the JSON array. No other text. No markdown.`;
             {results.map((r, i) => (
               <div key={i} style={styles.resultCard}>
                 <div style={styles.resultTitle}>{r.name}</div>
+                {photoMap[i] && photoMap[i].length > 0 && (
+                  <div style={{ display: "flex", gap: 6, marginBottom: 12, overflowX: "auto" }}>
+                    {photoMap[i].map((url, pi) => (
+                      <img key={pi} src={url} alt="" style={{ width: 120, height: 85, objectFit: "cover", borderRadius: 6, flexShrink: 0 }} />
+                    ))}
+                  </div>
+                )}
                 <div style={styles.stars}>{safeStars(r.rating)} {r.rating || "N/A"}/10</div>
                 <div>
                   <span style={styles.tag}>{(r.type || "hotel").toUpperCase()}</span>
@@ -226,7 +269,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
                 <a href={`https://www.google.com/maps/search/${encodeURIComponent(r.name + " " + r.area + " " + search.city)}`} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#F5C518", color: "#000", padding: "10px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>View Real Photos &amp; Reviews on Maps</a>
                 <a href={bookingAffiliateUrl(`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(r.name + " " + search.city)}`)} target="_blank" rel="noreferrer" style={{ flex: 1, background: "#003580", color: "#fff", padding: "10px 0", borderRadius: 6, textAlign: "center", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>Book Now</a>
               </div>
-              <div style={styles.photoNotice}>Photos and reviews load from the property's real Maps listing - not shown inline to avoid mismatched images.</div>
+              <div style={styles.photoNotice}>Photos are pulled live from Google Places. Click "View Real Photos & Reviews on Maps" for the full gallery and reviews.</div>
               </div>
             ))}
           </div>
