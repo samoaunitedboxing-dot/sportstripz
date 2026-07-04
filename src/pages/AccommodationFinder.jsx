@@ -16,8 +16,8 @@ function bookingAffiliateUrl(baseUrl) {
 }
 
 function safeStars(n) {
-  const num = typeof n === "number" && !isNaN(n) ? Math.max(0, Math.min(5, n)) : 0;
-  const filled = Math.max(0, Math.min(5, Math.floor(num)));
+  const num = typeof n === "number" && !isNaN(n) ? Math.max(0, Math.min(10, n)) : 0;
+  const filled = Math.max(0, Math.min(5, Math.round(num / 2)));
   return "*".repeat(filled) + "-".repeat(5 - filled);
 }
 
@@ -116,7 +116,7 @@ After researching, return ONLY a JSON array with 6 real accommodation options su
   "distance_to_centre": "X km from city centre",
   "price_usd": 85,
   "price_note": "per person per night",
-  "rating": 4.2,
+  "rating": 8.4 (on Booking.com's 10-point review scale, not 5),
   "group_discount": "10% for groups of 8+",
   "has_gym": true,
   "has_kitchen": false,
@@ -208,7 +208,7 @@ Return ONLY the JSON array. No other text. No markdown.`;
             {results.map((r, i) => (
               <div key={i} style={styles.resultCard}>
                 <div style={styles.resultTitle}>{r.name}</div>
-                <div style={styles.stars}>{safeStars(r.rating)} {r.rating || "N/A"}/5</div>
+                <div style={styles.stars}>{safeStars(r.rating)} {r.rating || "N/A"}/10</div>
                 <div>
                   <span style={styles.tag}>{(r.type || "hotel").toUpperCase()}</span>
                   {r.area && <span style={styles.tag}>{r.area}</span>}
