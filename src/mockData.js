@@ -8,7 +8,7 @@ export const MOCK_TOURNAMENTS = [
     flag: "🇧🇦",
     start_date: "2025-03-14",
     end_date: "2025-03-18",
-    age_groups: ["Youth (15-17)", "Junior (18-22)"],
+    age_groups: ["Youth (17-18)", "Elite (19-40)"],
     entry_fee: "€180 per boxer",
     visa_notes: "Schengen visa NOT required for most EU passport holders. UK nationals: visa-free for 90 days. US nationals: visa-free. Check requirements 6 weeks in advance.",
     level: "International",
@@ -52,7 +52,7 @@ export const MOCK_TOURNAMENTS = [
     flag: "🇧🇬",
     start_date: "2025-05-08",
     end_date: "2025-05-12",
-    age_groups: ["Youth (15-17)", "Junior (18-22)", "Senior (23-40)"],
+    age_groups: ["Youth (17-18)", "Elite (19-40)"],
     entry_fee: "€150 per boxer",
     visa_notes: "Bulgaria is EU but NOT yet Schengen. EU/EEA nationals: ID card sufficient. UK nationals: passport required, visa-free 90 days. US nationals: visa-free.",
     level: "International",
@@ -83,7 +83,7 @@ export const MOCK_TOURNAMENTS = [
     flag: "🇷🇸",
     start_date: "2025-07-22",
     end_date: "2025-07-27",
-    age_groups: ["Junior (18-22)", "Senior (23-40)"],
+    age_groups: ["Elite (19-40)"],
     entry_fee: "€200 per boxer",
     visa_notes: "Serbia is NOT in the EU or Schengen. EU nationals: visa-free 90 days. UK nationals: visa-free 90 days. US nationals: visa-free 90 days. No visa required for most Western countries.",
     level: "Elite International",
@@ -127,7 +127,7 @@ export const MOCK_TOURNAMENTS = [
     flag: "🇭🇷",
     start_date: "2025-09-19",
     end_date: "2025-09-22",
-    age_groups: ["Youth (15-17)"],
+    age_groups: ["Junior (15-16)"],
     entry_fee: "€130 per boxer",
     visa_notes: "Croatia IS in Schengen since 2023. Standard Schengen rules apply. EU nationals: ID card sufficient. UK nationals: passport required, visa-free 90 days. US nationals: visa-free.",
     level: "Regional",
@@ -158,7 +158,7 @@ export const MOCK_TOURNAMENTS = [
     flag: "🇵🇱",
     start_date: "2025-11-07",
     end_date: "2025-11-10",
-    age_groups: ["Junior (18-22)", "Senior (23-40)"],
+    age_groups: ["Elite (19-40)"],
     entry_fee: "€160 per boxer",
     visa_notes: "Poland is in Schengen. EU nationals: ID card sufficient. UK nationals: visa-free 90 days. US nationals: visa-free. PLN currency accepted everywhere; euros less common.",
     level: "International",
@@ -183,7 +183,7 @@ export const MOCK_TOURNAMENTS = [
 ]
 
 export const SPORTS = ["All Sports", "Boxing", "Wrestling", "Judo", "Taekwondo", "Kickboxing", "MMA"]
-export const AGE_GROUPS = ["All Ages", "Youth (15-17)", "Junior (18-22)", "Senior (23-40)", "Masters (40+)"]
+export const AGE_GROUPS = ["All Ages", "Junior (15-16)", "Youth (17-18)", "Elite (19-40)", "Masters (40+)"]
 export const MONTHS = [
   "All Months", "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
