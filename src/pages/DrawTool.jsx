@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const STORAGE_KEY = "sportstripz_draw_v1";
 
@@ -222,19 +222,21 @@ export default function DrawTool() {
     actionBtn: { background: "none", border: "1px solid #F5C518", color: "#F5C518", borderRadius: 6, padding: "6px 14px", fontSize: 12, cursor: "pointer", marginLeft: 8 },
     champion: { background: "#1a1500", border: "1px solid #F5C518", borderRadius: 8, padding: "10px 16px", color: "#F5C518", fontFamily: "Bebas Neue, sans-serif", fontSize: 18, letterSpacing: 1, marginBottom: 8 },
     bronze: { background: "#1a140a", border: "1px solid #b87333", borderRadius: 8, padding: "10px 16px", color: "#cd8b4a", fontFamily: "Bebas Neue, sans-serif", fontSize: 16, letterSpacing: 1, marginBottom: 16 },
-    bracketWrap: { display: "flex", gap: 32, overflowX: "auto", paddingBottom: 12 },
-    roundCol: { display: "flex", flexDirection: "column", justifyContent: "space-around", gap: 16, minWidth: 220 },
-    roundLabel: { color: "#666", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, textAlign: "center" },
+    bracketWrap: { display: "flex", gap: 40, overflowX: "auto", paddingBottom: 12, alignItems: "flex-start" },
+    treeRow: { display: "flex", alignItems: "center", gap: 24 },
+    treeCol: { display: "flex", flexDirection: "column", justifyContent: "space-between" },
+    childWrap: { position: "relative" },
     boutLabel: { color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 },
-    matchBox: { background: "#1a1a1a", border: "1px solid #333", borderRadius: 8, overflow: "hidden", position: "relative" },
-    slotBase: { padding: "10px 14px", fontSize: 13, borderBottom: "1px solid #333", cursor: "default", width: "100%", textAlign: "left", background: "none", border: "none", fontFamily: "inherit" },
+    matchBox: { background: "#1a1a1a", border: "1px solid #333", borderRadius: 8, overflow: "hidden", width: 220, flexShrink: 0 },
+    slotBase: { padding: "10px 14px", fontSize: 13, borderBottom: "1px solid #333", cursor: "default", width: "100%", textAlign: "left", background: "none", border: "none", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 8 },
     slotDefault: { color: "#ddd" },
     slotWinner: { color: "#0a0a0a", background: "#F5C518", fontWeight: 700 },
     slotLoser: { color: "#555", textDecoration: "line-through" },
     slotBye: { color: "#555", fontStyle: "italic" },
     slotEmpty: { color: "#444" },
     slotClickable: { cursor: "pointer" },
-    club: { fontSize: 11, marginLeft: 6, opacity: 0.75 },
+    club: { fontSize: 11, marginLeft: "auto", opacity: 0.75, whiteSpace: "nowrap" },
+    cornerDot: { width: 9, height: 9, borderRadius: "50%", flexShrink: 0, display: "inline-block" },
   };
 
   const isReady = raw.trim().length > 0;
@@ -294,11 +296,22 @@ export default function DrawTool() {
   };
 
   const renderSlot = (athlete, key, ri, mi, side, resolvedWinner, clickable, isBronze) => {
+    const dotColor = side === "a" ? "#e74c3c" : "#3498db";
     if (!athlete) {
-      return <div style={{ ...styles.slotBase, ...styles.slotEmpty }}>TBD</div>;
+      return (
+        <div style={{ ...styles.slotBase, ...styles.slotEmpty }}>
+          <span style={{ ...styles.cornerDot, background: dotColor, opacity: 0.4 }} />
+          TBD
+        </div>
+      );
     }
     if (athlete.isBye) {
-      return <div style={{ ...styles.slotBase, ...styles.slotBye }}>BYE</div>;
+      return (
+        <div style={{ ...styles.slotBase, ...styles.slotBye }}>
+          <span style={{ ...styles.cornerDot, background: dotColor, opacity: 0.4 }} />
+          BYE
+        </div>
+      );
     }
     const isWinner = resolvedWinner && resolvedWinner.id === athlete.id;
     const isLoser = resolvedWinner && resolvedWinner.id !== athlete.id;
@@ -310,10 +323,48 @@ export default function DrawTool() {
     const handleClick = isBronze ? () => pickBronze(key, side) : () => pickWinner(key, ri, mi, side);
     return (
       <button style={styleCombo} onClick={clickable ? handleClick : undefined} disabled={!clickable}>
+        <span style={{ ...styles.cornerDot, background: dotColor }} />
         {athlete.name}
         <span style={styles.club}>{athlete.club}</span>
       </button>
     );
+  };
+
+  // Recursively render the bracket tree so each match is vertically centered
+  // between the two matches feeding into it - this is what prevents the
+  // misalignment/overlap that happens with flat space-around columns.
+  const makeTreeRenderer = (rounds, boutNumbers, key, choices) => {
+    const renderNode = (ri, mi) => {
+      const match = rounds[ri][mi];
+      const resolvedWinner = resolveMatch(match, ri, mi, choices.rounds);
+      const clickable = !!(match.a && match.b && !match.a.isBye && !match.b.isBye);
+      const boutNum = boutNumbers[ri][mi];
+
+      const matchEl = (
+        <div>
+          {boutNum && <div style={styles.boutLabel}>Bout {boutNum}</div>}
+          <div style={styles.matchBox}>
+            {renderSlot(match.a, key, ri, mi, "a", resolvedWinner, clickable)}
+            {renderSlot(match.b, key, ri, mi, "b", resolvedWinner, clickable)}
+          </div>
+        </div>
+      );
+
+      if (ri === 0) {
+        return <div key={`${ri}-${mi}`}>{matchEl}</div>;
+      }
+
+      return (
+        <div key={`${ri}-${mi}`} style={styles.treeRow}>
+          <div style={{ ...styles.treeCol, gap: 24 }}>
+            <div style={styles.childWrap}>{renderNode(ri - 1, mi * 2)}</div>
+            <div style={styles.childWrap}>{renderNode(ri - 1, mi * 2 + 1)}</div>
+          </div>
+          {matchEl}
+        </div>
+      );
+    };
+    return renderNode;
   };
 
   return (
@@ -323,8 +374,6 @@ export default function DrawTool() {
           .no-print { display: none !important; }
           body { background: #fff !important; }
         }
-        .connect { position: relative; }
-        .connect::after { content: ''; position: absolute; top: 50%; right: -16px; width: 16px; height: 1px; background: #3a3a3a; }
       `}</style>
       <div style={styles.container}>
         <h1 style={styles.title}>DRAW TOOL</h1>
@@ -382,6 +431,7 @@ export default function DrawTool() {
                 : null
               : null;
             const hidden = printingGroup && printingGroup !== key;
+            const renderNode = makeTreeRenderer(rounds, boutNumbers, key, choices);
 
             return (
               <div key={key} style={styles.card} className={hidden ? "no-print" : ""}>
@@ -403,31 +453,11 @@ export default function DrawTool() {
                 {bronzeWinner && <div style={styles.bronze}>🥉 BRONZE: {bronzeWinner.name}</div>}
 
                 <div style={styles.bracketWrap}>
-                  {rounds.map((round, ri) => (
-                    <div key={ri} style={styles.roundCol}>
-                      <div style={styles.roundLabel}>
-                        {ri === 0 ? "Round 1" : ri === rounds.length - 1 ? "Final" : `Round ${ri + 1}`}
-                      </div>
-                      {round.map((match, mi) => {
-                        const resolvedWinner = resolveMatch(match, ri, mi, choices.rounds);
-                        const clickable = !!(match.a && match.b && !match.a.isBye && !match.b.isBye);
-                        const boutNum = boutNumbers[ri][mi];
-                        return (
-                          <div key={mi}>
-                            {boutNum && <div style={styles.boutLabel}>Bout {boutNum}</div>}
-                            <div style={styles.matchBox} className={ri < rounds.length - 1 ? "connect" : ""}>
-                              {renderSlot(match.a, key, ri, mi, "a", resolvedWinner, clickable)}
-                              {renderSlot(match.b, key, ri, mi, "b", resolvedWinner, clickable)}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
+                  {renderNode(finalRoundIdx, 0)}
 
                   {bronzeMatch && (
-                    <div style={styles.roundCol}>
-                      <div style={styles.roundLabel}>Bronze Medal Match</div>
+                    <div>
+                      <div style={styles.boutLabel}>Bronze Medal Match</div>
                       <div style={styles.matchBox}>
                         {renderSlot(bronzeMatch.a, key, "bronze", 0, "a", bronzeWinner, true, true)}
                         {renderSlot(bronzeMatch.b, key, "bronze", 0, "b", bronzeWinner, true, true)}
