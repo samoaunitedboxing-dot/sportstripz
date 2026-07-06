@@ -58,7 +58,7 @@ export default function AddTournamentForm({ user, onClose, onAdd }) {
     setError('')
 
     try {
-      const payload = { ...form, user_id: user.id }
+      const payload = { ...form, created_by: user.id }
       if (supabase) {
         const { data, error: err } = await supabase
           .from('tournaments')
