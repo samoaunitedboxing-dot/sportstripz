@@ -163,14 +163,16 @@ export default function Passbook({ user, onAuthRequired }) {
   const rec = selected ? record(bouts) : null;
 
   return (
-    <div style={styles.page}>
+    <div style={styles.page} className="passbook-page">
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          body { background: #fff !important; }
+          body { background: #fff !important; margin: 0 !important; }
           .print-only { display: block !important; }
+          .passbook-page { padding: 0 !important; min-height: auto !important; }
         }
         .print-only { display: none; }
+        @page { margin: 12mm; size: auto; }
       `}</style>
       <div style={styles.container}>
         {!selected ? (
