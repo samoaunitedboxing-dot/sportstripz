@@ -12,6 +12,7 @@ import AccommodationFinder from './pages/AccommodationFinder'
 import BudgetCalculator from './pages/BudgetCalculator'
 import DocumentGenerator from './components/DocumentGenerator'
 import DrawTool from './pages/DrawTool'
+import Passbook from './pages/Passbook'
 
 
 const DEFAULT_FILTERS = { sport: 'All Sports', country: 'All Countries', month: 'All Months', ageGroup: 'All Ages' }
@@ -45,6 +46,7 @@ const NAV_ITEMS = [
   { id: "budget", label: "Budget Tool", icon: "" },
   { id: "docs", label: "Doc Generator", icon: "" },
   { id: "draw", label: "Draw Tool", icon: "" },
+  { id: "passbook", label: "Passbook", icon: "" },
 ]
 
 export default function App() {
@@ -116,8 +118,13 @@ export default function App() {
   function addTournament(t) {
     const withId = { ...t, id: t.id || 'local-' + Date.now() }
     setTournaments(ts => [withId, ...ts])
-    const local = loadLocalTournaments()
-    saveLocalTournaments([withId, ...local])
+    // Only persist to localStorage if this is a genuine offline fallback
+    // (no real Supabase id was assigned) - otherwise it duplicates on next load
+    // once the same tournament also comes back from Supabase.
+    if (String(withId.id).startsWith('local-')) {
+      const local = loadLocalTournaments()
+      saveLocalTournaments([withId, ...local])
+    }
     setSavedToast(true)
     setTimeout(() => setSavedToast(false), 3000)
   }
@@ -219,6 +226,7 @@ export default function App() {
       {page === 'budget' && <BudgetCalculator {...sharedProps} />}
       {page === 'docs' && <DocumentGenerator />}
       {page === 'draw' && <DrawTool {...sharedProps} />}
+      {page === 'passbook' && <Passbook {...sharedProps} />}
       
 
 
@@ -248,6 +256,7 @@ export default function App() {
                   { id: 'planner', icon: '', title: 'AI Trip Planner', sub: 'Full itinerary in seconds' },
                   { id: 'flights', icon: '', title: 'Flight Finder', sub: 'Routes with passport warnings' },
                   { id: 'draw', icon: '', title: 'Draw Tool', sub: 'Auto-generate brackets by weight class' },
+                  { id: 'passbook', icon: '', title: 'Athlete Passbook', sub: 'Track bout history & export records' },
                 ].map(f => (
                   <button key={f.id} style={featureBtn} onClick={() => navigate(f.id)}
                     onMouseEnter={e => e.currentTarget.style.borderColor = '#F5C518'}
