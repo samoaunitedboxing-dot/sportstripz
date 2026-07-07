@@ -108,12 +108,24 @@ export default function Passbook({ user, onAuthRequired }) {
     }
   }
 
+  function printPassbook() {
+    window.print();
+  }
+
+  function record(list) {
+    const wins = list.filter((b) => b.result === "Win").length;
+    const losses = list.filter((b) => b.result === "Loss").length;
+    const draws = list.filter((b) => b.result === "Draw").length;
+    return { wins, losses, draws, total: list.length };
+  }
+
   const styles = {
     page: { minHeight: "100vh", background: "#0a0a0a", padding: "40px 20px", fontFamily: "Inter, sans-serif" },
     container: { maxWidth: 1000, margin: "0 auto" },
     title: { fontFamily: "Bebas Neue, sans-serif", fontSize: 48, color: "#F5C518", margin: "0 0 8px 0", letterSpacing: 2 },
     subtitle: { color: "#888", fontSize: 16, marginBottom: 24 },
     btn: { background: "#F5C518", color: "#000", border: "none", borderRadius: 8, padding: "12px 24px", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" },
+    btnOutline: { background: "none", border: "1px solid #F5C518", color: "#F5C518", borderRadius: 8, padding: "12px 24px", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", marginLeft: 12 },
     backBtn: { background: "none", border: "1px solid #333", color: "#aaa", borderRadius: 8, padding: "8px 16px", fontSize: 13, cursor: "pointer", marginBottom: 20, fontFamily: "inherit" },
     grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16, marginTop: 24 },
     athleteCard: { background: "#111", border: "1px solid #222", borderRadius: 12, padding: 20, cursor: "pointer" },
@@ -133,6 +145,7 @@ export default function Passbook({ user, onAuthRequired }) {
     empty: { textAlign: "center", padding: "60px 20px", color: "#666" },
     modalOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 },
     modal: { background: "#141414", border: "1px solid #2A2A2A", borderRadius: 16, padding: 28, width: "100%", maxWidth: 560, maxHeight: "90vh", overflowY: "auto" },
+    recordPill: { color: "#888", fontSize: 14, marginTop: 4 },
   };
 
   if (!user) {
@@ -147,22 +160,32 @@ export default function Passbook({ user, onAuthRequired }) {
     );
   }
 
+  const rec = selected ? record(bouts) : null;
+
   return (
     <div style={styles.page}>
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          body { background: #fff !important; }
+          .print-only { display: block !important; }
+        }
+        .print-only { display: none; }
+      `}</style>
       <div style={styles.container}>
         {!selected ? (
           <>
-            <h1 style={styles.title}>ATHLETE PASSBOOK</h1>
-            <p style={styles.subtitle}>Track every athlete's bout history in one place - permanent records that travel across tournaments and clubs.</p>
-            {error && <div style={styles.error}>{error}</div>}
-            <button style={styles.btn} onClick={() => setShowAddAthlete(true)}>+ Add Athlete</button>
+            <h1 style={styles.title} className="no-print">ATHLETE PASSBOOK</h1>
+            <p style={styles.subtitle} className="no-print">Track every athlete's bout history in one place - permanent records that travel across tournaments and clubs.</p>
+            {error && <div style={styles.error} className="no-print">{error}</div>}
+            <button style={styles.btn} className="no-print" onClick={() => setShowAddAthlete(true)}>+ Add Athlete</button>
 
             {loading ? (
-              <div style={styles.empty}>Loading...</div>
+              <div style={styles.empty} className="no-print">Loading...</div>
             ) : athletes.length === 0 ? (
-              <div style={styles.empty}>No athletes yet. Add your first one above.</div>
+              <div style={styles.empty} className="no-print">No athletes yet. Add your first one above.</div>
             ) : (
-              <div style={styles.grid}>
+              <div style={styles.grid} className="no-print">
                 {athletes.map((a) => (
                   <div key={a.id} style={styles.athleteCard} onClick={() => openAthlete(a)}>
                     <div style={styles.athleteName}>{a.full_name}</div>
@@ -177,17 +200,90 @@ export default function Passbook({ user, onAuthRequired }) {
           </>
         ) : (
           <>
-            <button style={styles.backBtn} onClick={() => setSelected(null)}>← Back to all athletes</button>
-            <h1 style={styles.title}>{selected.full_name}</h1>
-            <p style={styles.subtitle}>
-              {selected.club || "No club"} · {selected.nationality || "No nationality set"}
-              {selected.date_of_birth ? ` · DOB ${selected.date_of_birth}` : ""}
-              {selected.medical_clearance_date ? ` · Medical cleared ${selected.medical_clearance_date}` : ""}
-            </p>
-            {error && <div style={styles.error}>{error}</div>}
-            <button style={styles.btn} onClick={() => setShowAddBout(true)}>+ Log a Bout</button>
+            <button style={styles.backBtn} className="no-print" onClick={() => setSelected(null)}>← Back to all athletes</button>
 
-            <div style={{ marginTop: 24 }}>
+            {/* Screen view header */}
+            <div className="no-print">
+              <h1 style={styles.title}>{selected.full_name}</h1>
+              <p style={styles.subtitle}>
+                {selected.club || "No club"} · {selected.nationality || "No nationality set"}
+                {selected.date_of_birth ? ` · DOB ${selected.date_of_birth}` : ""}
+                {selected.medical_clearance_date ? ` · Medical cleared ${selected.medical_clearance_date}` : ""}
+              </p>
+              <p style={styles.recordPill}>
+                Record: {rec.wins}W - {rec.losses}L{rec.draws ? ` - ${rec.draws}D` : ""} ({rec.total} bout{rec.total !== 1 ? "s" : ""})
+              </p>
+            </div>
+
+            {/* Print-only official header */}
+            <div className="print-only" style={{ color: "#000" }}>
+              <div style={{ borderBottom: "3px solid #000", paddingBottom: 12, marginBottom: 20 }}>
+                <div style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: "#555" }}>Official Athlete Passbook</div>
+                <div style={{ fontSize: 32, fontWeight: 700, marginTop: 4 }}>{selected.full_name}</div>
+              </div>
+              <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 24, fontSize: 13 }}>
+                <tbody>
+                  <tr>
+                    <td style={{ padding: "4px 12px 4px 0", color: "#555", fontWeight: 600 }}>Club</td>
+                    <td style={{ padding: "4px 0" }}>{selected.club || "-"}</td>
+                    <td style={{ padding: "4px 12px 4px 24px", color: "#555", fontWeight: 600 }}>Nationality</td>
+                    <td style={{ padding: "4px 0" }}>{selected.nationality || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: "4px 12px 4px 0", color: "#555", fontWeight: 600 }}>Date of Birth</td>
+                    <td style={{ padding: "4px 0" }}>{selected.date_of_birth || "-"}</td>
+                    <td style={{ padding: "4px 12px 4px 24px", color: "#555", fontWeight: 600 }}>Gender</td>
+                    <td style={{ padding: "4px 0" }}>{selected.gender || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: "4px 12px 4px 0", color: "#555", fontWeight: 600 }}>Medical Clearance</td>
+                    <td style={{ padding: "4px 0" }}>{selected.medical_clearance_date || "-"}</td>
+                    <td style={{ padding: "4px 12px 4px 24px", color: "#555", fontWeight: 600 }}>Federation Reg. No.</td>
+                    <td style={{ padding: "4px 0" }}>{selected.federation_reg_number || "-"}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>
+                Record: {rec.wins}W - {rec.losses}L{rec.draws ? ` - ${rec.draws}D` : ""} ({rec.total} total bout{rec.total !== 1 ? "s" : ""})
+              </div>
+              <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 16, fontSize: 12 }}>
+                <thead>
+                  <tr style={{ borderBottom: "2px solid #000", textAlign: "left" }}>
+                    <th style={{ padding: "6px 8px 6px 0" }}>Date</th>
+                    <th style={{ padding: "6px 8px" }}>Tournament</th>
+                    <th style={{ padding: "6px 8px" }}>Opponent</th>
+                    <th style={{ padding: "6px 8px" }}>Weight</th>
+                    <th style={{ padding: "6px 8px" }}>Result</th>
+                    <th style={{ padding: "6px 0 6px 8px" }}>Method</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bouts.length === 0 ? (
+                    <tr><td colSpan={6} style={{ padding: "16px 0", color: "#777" }}>No bouts logged yet.</td></tr>
+                  ) : (
+                    bouts.map((b) => (
+                      <tr key={b.id} style={{ borderBottom: "1px solid #ccc" }}>
+                        <td style={{ padding: "6px 8px 6px 0" }}>{b.bout_date}</td>
+                        <td style={{ padding: "6px 8px" }}>{b.tournament_name || "-"}</td>
+                        <td style={{ padding: "6px 8px" }}>{b.opponent_name}{b.opponent_club ? ` (${b.opponent_club})` : ""}</td>
+                        <td style={{ padding: "6px 8px" }}>{b.weight_kg ? `${b.weight_kg}kg` : "-"}</td>
+                        <td style={{ padding: "6px 8px", fontWeight: 700 }}>{b.result}</td>
+                        <td style={{ padding: "6px 0 6px 8px" }}>{b.method}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+              <div style={{ marginTop: 32, fontSize: 11, color: "#777" }}>
+                Generated via SportsTripz on {new Date().toLocaleDateString()}
+              </div>
+            </div>
+
+            {error && <div style={styles.error} className="no-print">{error}</div>}
+            <button style={styles.btn} className="no-print" onClick={() => setShowAddBout(true)}>+ Log a Bout</button>
+            <button style={styles.btnOutline} className="no-print" onClick={printPassbook}>Print Passbook</button>
+
+            <div style={{ marginTop: 24 }} className="no-print">
               {bouts.length === 0 ? (
                 <div style={styles.empty}>No bouts logged yet for this athlete.</div>
               ) : (
